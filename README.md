@@ -1,6 +1,6 @@
 # [TechEliteAutomation.com](https://techeliteautomation.com) - `imp` Repository
 
-This is a **working** directory containing implementation documentation in markdown format that serve as starting points for development ideas or client-specific requests. The resources provided here are designed to help with AI integration, automation solutions, and website visibility optimization. These documents outline various modules, strategies, and templates, all of which are available for customization and implementation upon request.
+This is a **working** directory containing implementation documentation in markdown format, serving as starting points for development ideas or client-specific requests. The resources provided here are designed to help with AI integration, automation solutions, and website visibility optimization. These documents outline various modules, strategies, and templates, all of which are available for customization and implementation upon request.
 
 ## Contents
 
