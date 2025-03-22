@@ -24,3 +24,6 @@ To request a module, discuss a project, or initiate a development consultation, 
 ## Contributing
 
 This repository is primarily client-driven, with resources available for development and customization based on specific requests. If you have additional requirements or suggestions, feel free to reach out for further discussion.
+
+## License
+This repository is released under the MIT License.
