@@ -4,13 +4,13 @@ Welcome to the `imp` repository. This is a **working** directory containing mark
 
 ## Contents
 
-1. **100_modules_for_development.md**  
-   A curated list of 100 development modules, each designed to streamline workflows, enhance automation, and integrate AI-driven solutions. These modules can be customized and implemented as needed, based on client specifications.
-
-2. **ideogram.prompt_template.md**  
+1. **idg.template.md**
    A markdown template for creating structured AI prompts. This document offers best practices and a framework for generating high-quality prompts, adaptable to a variety of AI tasks and applications.
 
-3. **tea.maximize_site_visibility.md**  
+2. **mod.dev.md**  
+   A curated list of 100 development modules, each designed to streamline workflows, enhance automation, and integrate AI-driven solutions. These modules can be customized and implemented as needed, based on client specifications.
+
+3. **tea.seo.md**  
    A detailed guide focused on maximizing website visibility. It includes SEO techniques, automation strategies, and AI-backed methods to boost search engine rankings and improve online presence. Available for development based on client requests.
 
 ## Purpose
@@ -28,4 +28,3 @@ This repository is primarily client-driven, with resources available for develop
 ## License
 
 This repository is available under the [MIT License](LICENSE).
-
