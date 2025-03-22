@@ -4,7 +4,7 @@ Welcome to the `imp` repository. This is a **working** directory containing mark
 
 ## Contents
 
-1. **idg.template.md**
+1. **idg.template.md**  
    A markdown template for creating structured AI prompts. This document offers best practices and a framework for generating high-quality prompts, adaptable to a variety of AI tasks and applications.
 
 2. **mod.dev.md**  
