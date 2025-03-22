@@ -1,6 +1,6 @@
 # TechEliteAutomation - `imp` Repository
 
-Welcome to the `imp` repository. This is a **working** directory containing markdown documents that serve as starting points for development ideas or client-specific requests. The resources provided here are designed to help with AI integration, automation solutions, and website visibility optimization. These documents outline various modules, strategies, and templates, all of which are available for customization and implementation upon request.
+This is a **working** directory containing markdown documents that serve as starting points for development ideas or client-specific requests. The resources provided here are designed to help with AI integration, automation solutions, and website visibility optimization. These documents outline various modules, strategies, and templates, all of which are available for customization and implementation upon request.
 
 ## Contents
 
