@@ -12,6 +12,9 @@ This is a **working** directory containing implementation documentation in markd
 
 3. **tea.seo.md**  
    A detailed guide focused on maximizing website visibility. It includes SEO techniques, automation strategies, and AI-backed methods to boost search engine rankings and improve online presence. Available for development based on client requests.
+   
+4. **x.auto-post.md**
+   This document provides a step-by-step implementation guide for automating posts on X.com using X's free API. It covers API setup, authentication, and a Python-based solution for posting content programmatically.
 
 ## Purpose
 
