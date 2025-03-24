@@ -1,5 +1,5 @@
 # Tech Elite Automation
-# Modules for Development
+# Modules Available for Development
 
 ## 1. Core Infrastructure & DevOps Automation
 1. **Automated CI/CD Pipeline** – Deploys projects with GitHub Actions & self-hosted runners.
