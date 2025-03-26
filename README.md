@@ -7,11 +7,8 @@ This is a **working** directory containing implementation documentation in markd
 1. **idg.template.md**  
    A markdown template for creating structured AI prompts. This document offers best practices and a framework for generating high-quality prompts, adaptable to a variety of AI tasks and applications.
 
-2. **mod.dev.md**  
+2. **mod.development.md**  
    A curated list of 100 development modules, each designed to streamline workflows, enhance automation, and integrate AI-driven solutions. These modules can be customized and implemented as needed, based on client specifications.
-
-3. **tea.seo.md**  
-   A detailed guide focused on maximizing website visibility. It includes SEO techniques, automation strategies, and AI-backed methods to boost search engine rankings and improve online presence. Available for development based on client requests.
    
 4. **x.autopost.md**  
    A step-by-step implementation guide for automating posts on X.com using X's free API. It covers API setup, authentication, and a Python-based solution for posting content programmatically.
