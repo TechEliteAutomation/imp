@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Role Simulation Implementations (Solarized Dark)</title>
+    <style>
+        /* Solarized Dark Theme */
+        body {
+            background-color: #002b36; /* base03 */
+            color: #839496; /* base0 */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #268bd2; /* blue */
+            border-bottom: 1px solid #586e75; /* base01 */
+            padding-bottom: 5px;
+            margin-top: 1.5em;
+        }
+        h1 { font-size: 2em; }
+        h2 { font-size: 1.5em; }
+        h3 { font-size: 1.2em; color: #b58900; /* yellow */ border-bottom: none;} /* Role Titles */
+
+        dl {
+            margin-left: 0;
+            padding-left: 0;
+        }
+        dt {
+            font-weight: bold;
+            color: #93a1a1; /* base1 */
+            margin-top: 1.5em;
+            font-size: 1.2em; /* Make role names stand out */
+        }
+        dd {
+            margin-left: 2em;
+            margin-bottom: 1em;
+            color: #839496; /* base0 */
+            border-left: 2px solid #073642; /* base02 */
+            padding-left: 1em;
+        }
+        strong {
+           color: #eee8d5; /* base2 - for emphasis on labels */
+        }
+        code {
+            color: #2aa198; /* cyan */
+            background-color: #073642; /* base02 */
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.95em;
+        }
+        p {
+            margin-bottom: 1em;
+        }
+        .intro {
+            background-color: #073642; /* base02 */
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #586e75; /* base01 */
+            color: #93a1a1; /* base1 */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>AI Role Simulation Implementations</h1>
+
+    <p class="intro">
+        Below are suggested implementation forms and recommended <strong>local Ollama models</strong> for simulating various roles. The model recommendations aim for a balance between <strong>capability for the role</strong> and <strong>system performance</strong> (avoiding excessively large models unless necessary for the task, prioritizing responsiveness). Your actual performance will depend on your hardware (CPU, RAM, GPU VRAM). You may need to experiment. Models like <code>phi4-mini</code>, <code>llama3.2:3b</code>, <code>mistral</code>, and <code>llama3.1</code> generally offer good starting points.
+    </p>
+
+    <dl>
+
+        <h2>I. Communication & Support Roles</h2>
+
+        <dt>1. Customer Service Representative</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Conversational Agent Script (+ optional RAG for knowledge base).<br>
+            <strong>Suggested Local Model:</strong> <code>phi4-mini</code> (Fast, good for general conversation) or <code>mistral</code> (Slightly larger, potentially better nuance/instruction following). Use RAG for specific product info.
+        </dd>
+
+        <dt>2. Technical Support Agent (Tier 1/2)</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Conversational Agent Script + RAG.<br>
+            <strong>Suggested Local Model:</strong> <code>mistral</code> (Good instruction following for diagnostic flows) or <code>llama3.1</code> (More capable if complex tech knowledge needs reasoning). RAG is essential for technical docs.
+        </dd>
+
+        <dt>3. Virtual Assistant</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Task-Oriented Script (may or may not need full conversation history).<br>
+            <strong>Suggested Local Model:</strong> <code>phi4-mini</code> (Good for quick tasks like summarizing, drafting basic emails) or <code>llama3.1</code> (Better for more complex instructions/planning).
+        </dd>
+
+        <dt>4. Chatbot/Moderator</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Conversational Agent Script.<br>
+            <strong>Suggested Local Model:</strong> <code>phi4-mini</code> or <code>llama3.2:3b</code> (Fast responses are key, usually based on defined rules/FAQs).
+        </dd>
+
+        <dt>5. Public Relations Specialist (Drafting/Comms)</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Generation Script (prompt-response).<br>
+            <strong>Suggested Local Model:</strong> <code>mistral</code> or <code>llama3.1</code> (Needs good writing quality and ability to adopt a specific tone/brand voice).
+        </dd>
+
+        <h2>II. Content & Creative Roles</h2>
+
+        <dt>6. Writer/Author (Specific Genres/Styles)</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Generation Script.<br>
+            <strong>Suggested Local Model:</strong> <code>llama3.1</code> (Strong generation capabilities for creative tasks) or <code>mistral</code> (Good all-rounder). Requires detailed prompting for style.
+        </dd>
+
+        <dt>7. Journalist/Reporter (Basic Tasks)</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Generation Script (prompt-response or simple conversation).<br>
+            <strong>Suggested Local Model:</strong> <code>mistral</code> (Good for summarizing and adhering to factual reporting style).
+        </dd>
+
+        <dt>8. Game Characters (NPCs)</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Conversational Agent Script.<br>
+            <strong>Suggested Local Model:</strong> <code>phi4-mini</code> or <code>llama3.2:3b</code> (Response speed is often critical for NPCs, needs to maintain persona based on prompt).
+        </dd>
+
+        <dt>9. Social Media Manager</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Generation Script (prompt-response).<br>
+            <strong>Suggested Local Model:</strong> <code>mistral</code> or <code>llama3.1</code> (Needs creativity and ability to match brand voice/platform style).
+        </dd>
+
+        <dt>10. Translator (Text-Based)</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Simple Prompt/Response Script.<br>
+            <strong>Suggested Local Model:</strong> <code>mistral</code> or <code>llama3.1</code> (Most 7B+ models handle translation well).
+        </dd>
+
+        <h2>III. Information & Analysis Roles</h2>
+
+        <dt>11. Researcher (Basic Tasks)</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Generation Script + RAG.<br>
+            <strong>Suggested Local Model:</strong> <code>mistral</code> (Good at summarizing and extracting info from context provided via RAG).
+        </dd>
+
+        <dt>12. Data Analyst (Descriptive/Basic Interpretation)</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Generation Script.<br>
+            <strong>Suggested Local Model:</strong> <code>mistral</code> or <code>llama3.1</code> (Needs ability to follow structured prompts to describe trends from text/tables).
+        </dd>
+
+        <dt>13. Librarian/Archivist</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Conversational Agent Script + RAG.<br>
+            <strong>Suggested Local Model:</strong> <code>mistral</code> (Good instruction following for querying simulated database via RAG).
+        </dd>
+
+        <h2>IV. Educational & Training Roles</h2>
+
+        <dt>14. Tutor/Teacher</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Conversational Agent Script + RAG (Optional).<br>
+            <strong>Suggested Local Model:</strong> <code>mistral</code> or <code>llama3.1</code> (Needs to explain concepts clearly and follow conversational flow). RAG for specific subject matter.
+        </dd>
+
+        <dt>15. Language Learning Partner</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Conversational Agent Script.<br>
+            <strong>Suggested Local Model:</strong> <code>mistral</code> (Good conversational ability). <code>phi4-mini</code> for faster, simpler exchanges.
+        </dd>
+
+        <dt>16. Corporate Trainer</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Conversational Agent Script or Structured Module Delivery Script + RAG.<br>
+            <strong>Suggested Local Model:</strong> <code>phi4-mini</code> or <code>mistral</code> (Delivering defined content and answering related questions).
+        </dd>
+
+        <h2>V. Technical Roles</h2>
+
+        <dt>17. Programmer/Coder Assistant</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Generation/Conversational Script.<br>
+            <strong>Suggested Local Model:</strong> <code>codellama</code> (Specifically tuned for code) or <code>phi4-mini</code> (Surprisingly capable coder for its size, and fast). <code>deepseek-coder</code> (if available via Ollama, also strong) or <code>llama3.1</code> as a generalist backup.
+        </dd>
+
+        <dt>18. QA Tester (Conceptual/Test Case Generation)</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Generation Script.<br>
+            <strong>Suggested Local Model:</strong> <code>mistral</code> or <code>llama3.1</code> (Needs good instruction following to generate varied test cases based on requirements).
+        </dd>
+
+        <h2>VI. Roles Requiring Complex Decision-Making & Interaction</h2>
+        <p><em>(Note: Simulation fidelity focuses on reasoning/communication patterns. Requires careful prompting and potentially RAG. Larger models generally perform better but slower.)</em></p>
+
+        <dt>19. Therapist/Counselor (Simulated Modalities)</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Conversational Agent Script.<br>
+            <strong>Suggested Local Model:</strong> <code>llama3.1</code> (Needs nuance and strong instruction following for specific therapeutic models - requires *extremely* careful prompting and ethical guardrails). <code>mistral</code> as a lighter alternative.
+        </dd>
+
+        <dt>20. Mediator/Negotiator</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Conversational Agent Script.<br>
+            <strong>Suggested Local Model:</strong> <code>mistral</code> or <code>llama3.1</code> (Needs to follow structured negotiation steps/strategies defined in the prompt).
+        </dd>
+
+        <dt>21. HR Manager (Specific Tasks)</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Conversational Agent Script + RAG.<br>
+            <strong>Suggested Local Model:</strong> <code>mistral</code> (Good for explaining policies via RAG, handling structured interviews). <code>llama3.1</code> for more nuanced scenario handling.
+        </dd>
+
+        <dt>22. Business Strategist/Consultant</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Generation/Conversational Script + RAG.<br>
+            <strong>Suggested Local Model:</strong> <code>llama3.1</code> (Better reasoning needed for applying analytical frameworks like SWOT). <code>phi4</code> (14B) if more power is needed and hardware allows.
+        </dd>
+
+        <dt>23. Financial Analyst (Recommendations - Simulation Only)</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Generation Script + RAG.<br>
+            <strong>Suggested Local Model:</strong> <code>llama3.1</code> (Needs logical reasoning based on rules/data). Add strong 'not financial advice' disclaimers.
+        </dd>
+
+        <dt>24. Doctor/Clinician (Diagnostic Reasoning - Simulation Only)</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Conversational/Query Script + RAG.<br>
+            <strong>Suggested Local Model:</strong> <code>llama3.1</code> (Requires reasoning over complex medical info via RAG). <code>phi4</code> (14B) potentially better if available/performant. Add strong 'not medical advice' disclaimers.
+        </dd>
+
+        <dt>25. Lawyer/Judge (Legal Reasoning - Simulation Only)</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Generation/Query Script + RAG.<br>
+            <strong>Suggested Local Model:</strong> <code>llama3.1</code> (Needs ability to apply legal principles from RAG to fact patterns). Add strong 'not legal advice' disclaimers.
+        </dd>
+
+        <dt>26. Architect (Conceptual Design/Planning)</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Conversational/Generation Script.<br>
+            <strong>Suggested Local Model:</strong> <code>mistral</code> or <code>llama3.1</code> (Focuses on describing ideas textually based on requirements).
+        </dd>
+
+        <dt>27. Air Traffic Controller / Emergency Dispatcher (Simulated Environment)</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Decision Agent Script (Rule-Based + LLM for communication).<br>
+            <strong>Suggested Local Model:</strong> <code>phi4-mini</code> or <code>llama3.2:3b</code> (Speed and adherence to protocol are key; LLM mostly for formatted communication output).
+        </dd>
+
+        <dt>28. Military Tactician / Campaign Manager (Scenario-Based)</dt>
+        <dd>
+            <strong>Implementation Form:</strong> Generation/Analysis Script + RAG.<br>
+            <strong>Suggested Local Model:</strong> <code>llama3.1</code> (Needs strategic reasoning based on provided intel/rules). <code>phi4</code> (14B) if more complex analysis is needed.
+        </dd>
+
+    </dl>
+
+</body>
+</html>
