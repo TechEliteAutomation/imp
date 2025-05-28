@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyper-Powered Job Application Console v2.1</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Solarized Dark Palette (same as before) */
+        :root {
+            --base03:  #002b36; --base02:  #073642; --base01:  #586e75;
+            --base00:  #657b83; --base0:   #839496; --base1:   #93a1a1;
+            --base2:   #eee8d5; --base3:   #fdf6e3; --yellow:  #b58900;
+            --orange:  #cb4b16; --red:     #dc322f; --magenta: #d33682;
+            --violet:  #6c71c4; --blue:    #268bd2; --cyan:    #2aa198;
+            --green:   #859900;
+            --font-primary: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            --font-mono: 'Fira Code', 'Consolas', 'Monaco', monospace;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-size: 15px; }
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--base03);
+            color: var(--base0);
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .app-header {
+            background-color: var(--base02);
+            padding: 1rem 1.5rem;
+            text-align: center;
+            border-bottom: 2px solid var(--blue);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .app-header h1 { color: var(--base2); font-size: 1.8rem; font-weight: 400; }
+        .app-header h1 i { margin-right: 0.5rem; color: var(--cyan); }
+
+        .page-container {
+            flex-grow: 1;
+            width: 100%;
+            max-width: 1600px;
+            margin: 1rem auto;
+            padding: 0 1rem;
+        }
+
+        .tool-category-header {
+            color: var(--base1);
+            font-size: 1.5rem;
+            font-weight: 300;
+            padding-bottom: 0.5rem;
+            margin: 1.5rem 0 1rem 0;
+            border-bottom: 1px solid var(--base01);
+            display: flex;
+            align-items: center;
+        }
+        .tool-category-header i { margin-right: 0.75rem; color: var(--yellow); font-size: 1.3rem;}
+
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 1rem;
+        }
+
+        .full-width-section { grid-column: 1 / -1; }
+
+        .tool-card {
+            background-color: var(--base02);
+            padding: 1rem;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            border-left: 4px solid var(--cyan);
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.2s ease-in-out;
+        }
+        .tool-card:hover { box-shadow: 0 4px 12px rgba(38,139,210,0.3); }
+
+
+        .tool-card h3 {
+            color: var(--base1);
+            font-size: 1.15rem;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--base00);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        .tool-card h3 i { margin-right: 0.5rem; font-size: 1rem; width: 20px; text-align: center;}
+        .tool-card h4 { color: var(--base0); font-size: 0.95rem; margin: 0.75rem 0 0.25rem 0; font-weight: 500;}
+
+
+        .form-group { margin-bottom: 0.75rem; }
+        .form-group label {
+            display: block; color: var(--base0);
+            margin-bottom: 0.25rem; font-weight: 400;
+            font-size: 0.85rem;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="password"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            background-color: var(--base03);
+            color: var(--base1);
+            border: 1px solid var(--base00);
+            border-radius: 3px;
+            font-size: 0.9rem;
+            font-family: var(--font-primary);
+        }
+        .form-group input[type="text"]:focus,
+        .form-group input[type="password"]:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 1px var(--blue);
+        }
+        .form-group textarea { min-height: 80px; resize: vertical; font-family: var(--font-mono);}
+        .form-group select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23839496'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1.2em; padding-right: 2em;}
+
+        .button-group { display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap; }
+        .btn {
+            padding: 0.5rem 1rem; font-size: 0.85rem; font-weight: 500;
+            border: 1px solid transparent;
+            border-radius: 3px; cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center; display: inline-flex; align-items: center; justify-content: center;
+        }
+        .btn i { margin-right: 0.4rem; font-size: 0.9em; }
+        .btn-primary { background-color: var(--blue); color: var(--base3); border-color: var(--blue); }
+        .btn-primary:hover { background-color: var(--violet); border-color: var(--violet); }
+        .btn-secondary { background-color: var(--green); color: var(--base03); border-color: var(--green); }
+        .btn-secondary:hover { background-color: var(--yellow); border-color: var(--yellow); }
+        .btn-tertiary { background-color: var(--orange); color: var(--base3); border-color: var(--orange); }
+        .btn-tertiary:hover { background-color: var(--red); border-color: var(--red); }
+        .btn-info { background-color: var(--cyan); color: var(--base03); border-color: var(--cyan); }
+        .btn-info:hover { background-color: var(--base01); color: var(--base2); border-color: var(--base01); }
+        .btn-subtle { background-color: var(--base01); color: var(--base2); border-color: var(--base00); }
+        .btn-subtle:hover { background-color: var(--base00); color: var(--base3); }
+
+
+        .btn-copy {
+            background-color: var(--base01); color: var(--base2); font-size: 0.75rem;
+            padding: 0.25rem 0.5rem; margin-top: 0.25rem; float: right; border-radius: 3px;
+        }
+        .btn-copy:hover { background-color: var(--base00); }
+
+        .output-content {
+            background-color: var(--base03); color: var(--base0); padding: 0.75rem;
+            border: 1px solid var(--base00); border-radius: 3px; min-height: 100px;
+            white-space: pre-wrap; font-family: var(--font-mono);
+            font-size: 0.85rem;
+            overflow-x: auto; margin-top: 0.5rem;
+            flex-grow: 1;
+        }
+        .output-content ul { padding-left: 15px; }
+        .output-content li { margin-bottom: 0.3em; }
+
+        .loading-indicator {
+            display: none; text-align: center; padding: 0.5rem; color: var(--cyan);
+            font-size: 0.9rem;
+        }
+        .loading-indicator i { font-size: 1.5rem; margin-bottom: 0.25rem; display: block;}
+
+        .app-footer {
+            background-color: var(--base02); color: var(--base00); text-align: center;
+            padding: 0.75rem; margin-top: auto; font-size: 0.8rem;
+            border-top: 1px solid var(--base01);
+        }
+
+        /* Tool Card Specific Accents */
+        .card-config { border-left-color: var(--orange); }
+        .card-inputs { border-left-color: var(--yellow); }
+        .card-analysis { border-left-color: var(--green); }
+        .card-generation { border-left-color: var(--blue); }
+        .card-communication { border-left-color: var(--magenta); }
+        .card-prep { border-left-color: var(--violet); }
+        .card-log { border-left-color: var(--base1); }
+
+
+        /* For two-column layout within a card if needed */
+        .card-content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+        @media (max-width: 768px) {
+            .card-content-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Job Log Table Styles */
+        .job-log-table-container {
+            max-height: 400px; /* Or whatever height you prefer */
+            overflow-y: auto;
+            margin-top: 0.5rem;
+            border: 1px solid var(--base00);
+            border-radius: 3px;
+        }
+        .job-log-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .job-log-table th, .job-log-table td {
+            padding: 0.5rem 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--base00);
+        }
+        .job-log-table th {
+            background-color: var(--base03);
+            color: var(--base1);
+            position: sticky;
+            top: 0; /* For sticky header within scrollable container */
+            z-index: 10;
+        }
+        .job-log-table tr:last-child td {
+            border-bottom: none;
+        }
+        .job-log-table tr:hover {
+            background-color: var(--base03);
+        }
+        .status-pending { color: var(--yellow); }
+        .status-sent { color: var(--green); }
+        .status-processing { color: var(--cyan); }
+        .job-log-table .btn-log-action {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            margin-right: 0.25rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="app-header">
+        <h1><i class="fas fa-atom"></i> Job Application Console v2.1</h1>
+    </header>
+
+    <div class="page-container">
+
+        <!-- Core Setup & Inputs (Same as before) -->
+        <div class="tool-category-header"><i class="fas fa-cogs"></i>Core Setup & Inputs</div>
+        <section class="full-width-section grid-container">
+            <div class="tool-card card-config">
+                <h3><i class="fas fa-key"></i>API & Profile</h3>
+                <div class="card-content-grid">
+                    <div>
+                        <div class="form-group">
+                            <label for="apiKey">Gemini API Key</label>
+                            <input type="password" id="apiKey" name="apiKey" placeholder="Gemini API Key">
+                        </div>
+                        <div class="form-group">
+                            <label for="userFullName">Your Full Name</label>
+                            <input type="text" id="userFullName" placeholder="e.g., Dr. Jane Doe">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label for="userCoreSkills">Top 3-5 Core Skills (comma-sep)</label>
+                            <input type="text" id="userCoreSkills" placeholder="Python, AI, Project Mgmt">
+                        </div>
+                        <div class="form-group">
+                            <label for="userCareerGoal">Brief Career Goal</label>
+                            <textarea id="userCareerGoal" rows="1" placeholder="Seeking role in AI research..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                 <button id="btnSaveProfile" class="btn btn-info btn-subtle" style="margin-top:auto;"><i class="fas fa-save"></i> Save Profile</button>
+            </div>
+
+            <div class="tool-card card-inputs" style="grid-column: span 2;">
+                <h3><i class="fas fa-paste"></i>Primary Inputs</h3>
+                 <div class="card-content-grid">
+                    <div class="form-group">
+                        <label for="jobDescription">Job Description</label>
+                        <textarea id="jobDescription" name="jobDescription" rows="7" placeholder="Paste job description..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="currentResume">Current Resume (Text)</label>
+                        <textarea id="currentResume" name="currentResume" rows="7" placeholder="Paste resume text..."></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="userNotes">Optional Directives for AI (Current Task)</label>
+                    <textarea id="userNotes" name="userNotes" rows="2" placeholder="e.g., Emphasize leadership. Focus on last 5 years."></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analysis & Optimization Tools (Same as before) -->
+        <div class="tool-category-header"><i class="fas fa-search-plus"></i>Analysis & Optimization</div>
+        <div class="grid-container">
+            <div class="tool-card card-analysis">
+                <h3><i class="fas fa-clipboard-check"></i>JD Analyzer</h3>
+                <button id="btnAnalyzeJD" class="btn btn-secondary"><i class="fas fa-play"></i> Analyze JD</button>
+                <div class="loading-indicator" id="loadingJDAnalysis"><i class="fas fa-spinner fa-spin"></i></div>
+                <h4><i class="fas fa-tags"></i>Key Skills & Keywords:</h4>
+                <div id="jdKeywordsOutput" class="output-content">JD keywords...</div>
+                <h4><i class="fas fa-building"></i>Company/Culture Insights:</h4>
+                <div id="jdCompanyInsightsOutput" class="output-content">JD insights...</div>
+            </div>
+            <div class="tool-card card-analysis">
+                <h3><i class="fas fa-user-check"></i>Resume Strength</h3>
+                <button id="btnAnalyzeResume" class="btn btn-secondary"><i class="fas fa-play"></i> Analyze Resume</button>
+                <div class="loading-indicator" id="loadingResumeAnalysis"><i class="fas fa-spinner fa-spin"></i></div>
+                <h4><i class="fas fa-chart-bar"></i>Overall Feedback:</h4>
+                <div id="resumeStrengthOutput" class="output-content">Resume feedback...</div>
+            </div>
+            <div class="tool-card card-analysis">
+                <h3><i class="fas fa-filter"></i>ATS Optimizer</h3>
+                <button id="btnAnalyzeATS" class="btn btn-secondary"><i class="fas fa-play"></i> Optimize for ATS</button>
+                <div class="loading-indicator" id="loadingATSAnalysis"><i class="fas fa-spinner fa-spin"></i></div>
+                <h4><i class="fas fa-tasks"></i>ATS Keywords & Integration Score:</h4>
+                <div id="atsKeywordsOutput" class="output-content">ATS keywords from JD...</div>
+                <h4><i class="fas fa-bullseye"></i>Resume Integration Check:</h4>
+                <div id="atsIntegrationOutput" class="output-content">How well resume integrates ATS keywords...</div>
+            </div>
+        </div>
+
+        <!-- Content Generation Tools (Same as before) -->
+        <div class="tool-category-header"><i class="fas fa-pencil-alt"></i>Content Generation</div>
+        <div class="grid-container">
+            <div class="tool-card card-generation">
+                <h3><i class="fas fa-envelope-open-text"></i>Cover Letter</h3>
+                <div class="form-group">
+                    <label for="coverLetterTone">Tone:</label>
+                    <select id="coverLetterTone">
+                        <option value="professional">Professional</option>
+                        <option value="enthusiastic">Enthusiastic</option>
+                        <option value="concise">Concise</option>
+                        <option value="creative">Creative</option>
+                    </select>
+                </div>
+                <button id="btnGenerateCoverLetter" class="btn btn-primary"><i class="fas fa-pen-fancy"></i> Generate</button>
+                <div class="loading-indicator" id="loadingCoverLetter"><i class="fas fa-spinner fa-spin"></i></div>
+                <button class="btn btn-copy" onclick="copyToClipboard('coverLetterOutput')"><i class="fas fa-copy"></i></button>
+                <div id="coverLetterOutput" class="output-content">Cover letter...</div>
+            </div>
+            <div class="tool-card card-generation">
+                <h3><i class="fas fa-user-edit"></i>Resume Tweaks</h3>
+                <button id="btnTweakResume" class="btn btn-primary"><i class="fas fa-wrench"></i> Suggest Tweaks</button>
+                <div class="loading-indicator" id="loadingResumeTweaks"><i class="fas fa-spinner fa-spin"></i></div>
+                <button class="btn btn-copy" onclick="copyToClipboard('resumeTweaksOutput')"><i class="fas fa-copy"></i></button>
+                <div id="resumeTweaksOutput" class="output-content">Resume tweaks...</div>
+            </div>
+            <div class="tool-card card-generation">
+                <h3><i class="fas fa-puzzle-piece"></i>Resume Section Builder</h3>
+                <div class="form-group">
+                    <label for="resumeSectionToBuild">Section Name (e.g., Summary):</label>
+                    <input type="text" id="resumeSectionToBuild" placeholder="Summary, Project X details...">
+                </div>
+                <button id="btnBuildResumeSection" class="btn btn-primary"><i class="fas fa-hammer"></i> Build</button>
+                <div class="loading-indicator" id="loadingResumeSection"><i class="fas fa-spinner fa-spin"></i></div>
+                <button class="btn btn-copy" onclick="copyToClipboard('resumeSectionOutput')"><i class="fas fa-copy"></i></button>
+                <div id="resumeSectionOutput" class="output-content">Built section...</div>
+            </div>
+        </div>
+
+        <!-- Communication & Preparation Tools (Same as before) -->
+        <div class="tool-category-header"><i class="fas fa-comments"></i>Communication & Preparation</div>
+        <div class="grid-container">
+            <div class="tool-card card-communication">
+                <h3><i class="fab fa-linkedin"></i>Networking Message</h3>
+                <div class="form-group">
+                    <label for="networkingPurpose">Purpose:</label>
+                    <select id="networkingPurpose">
+                        <option value="recruiter_outreach">Recruiter Outreach</option>
+                        <option value="hiring_manager_contact">Hiring Manager Contact</option>
+                        <option value="informational_interview">Informational Interview Request</option>
+                        <option value="general_connection">General Connection</option>
+                    </select>
+                </div>
+                <button id="btnGenerateNetworkingMessage" class="btn btn-tertiary"><i class="fas fa-paper-plane"></i> Craft Message</button>
+                <div class="loading-indicator" id="loadingNetworkingMessage"><i class="fas fa-spinner fa-spin"></i></div>
+                <button class="btn btn-copy" onclick="copyToClipboard('networkingMessageOutput')"><i class="fas fa-copy"></i></button>
+                <div id="networkingMessageOutput" class="output-content">Networking message...</div>
+            </div>
+            <div class="tool-card card-communication">
+                <h3><i class="fas fa-reply"></i>Follow-Up Email</h3>
+                 <div class="form-group">
+                    <label for="followupType">Type:</label>
+                    <select id="followupType">
+                        <option value="post_interview_thanks">Post-Interview Thank You</option>
+                        <option value="application_status_check">Application Status Check</option>
+                        <option value="after_networking_event">After Networking Event</option>
+                    </select>
+                </div>
+                <button id="btnGenerateFollowUp" class="btn btn-tertiary"><i class="fas fa-envelope-circle-check"></i> Generate Email</button>
+                <div class="loading-indicator" id="loadingFollowUp"><i class="fas fa-spinner fa-spin"></i></div>
+                <button class="btn btn-copy" onclick="copyToClipboard('followUpOutput')"><i class="fas fa-copy"></i></button>
+                <div id="followUpOutput" class="output-content">Follow-up email...</div>
+            </div>
+            <div class="tool-card card-prep">
+                <h3><i class="fas fa-microphone-alt"></i>Elevator Pitch / "About Me"</h3>
+                <button id="btnGenerateElevatorPitch" class="btn btn-info"><i class="fas fa-bolt"></i> Generate Pitch</button>
+                <div class="loading-indicator" id="loadingElevatorPitch"><i class="fas fa-spinner fa-spin"></i></div>
+                <button class="btn btn-copy" onclick="copyToClipboard('elevatorPitchOutput')"><i class="fas fa-copy"></i></button>
+                <div id="elevatorPitchOutput" class="output-content">Your pitch...</div>
+            </div>
+            <div class="tool-card card-prep">
+                <h3><i class="fas fa-tasks"></i>Interview Prep Kit</h3>
+                <button id="btnGenerateInterviewPrep" class="btn btn-info"><i class="fas fa-list-alt"></i> Generate Kit</button>
+                <div class="loading-indicator" id="loadingInterviewPrep"><i class="fas fa-spinner fa-spin"></i></div>
+                <h4><i class="fas fa-star"></i>Behavioral Qs:</h4>
+                <div id="interviewBehavioralOutput" class="output-content">Behavioral Qs...</div>
+                <h4><i class="fas fa-code"></i>Technical Qs:</h4>
+                <div id="interviewTechnicalOutput" class="output-content">Technical Qs...</div>
+                <h4><i class="fas fa-question-circle"></i>Your Qs for Them:</h4>
+                <div id="interviewUserQuestionsOutput" class="output-content">Your Qs...</div>
+            </div>
+            <div class="tool-card card-prep">
+                <h3><i class="fas fa-chart-line"></i>Skill Gap Analyzer</h3>
+                <button id="btnAnalyzeSkillGap" class="btn btn-info"><i class="fas fa-search"></i> Analyze Gap</button>
+                <div class="loading-indicator" id="loadingSkillGap"><i class="fas fa-spinner fa-spin"></i></div>
+                <h4><i class="fas fa-graduation-cap"></i>Gaps & Learning:</h4>
+                <div id="skillGapOutput" class="output-content">Skill gaps...</div>
+            </div>
+        </div>
+
+        <!-- Job Application Log -->
+        <div class="tool-category-header"><i class="fas fa-history"></i>Job Application Log</div>
+        <section class="full-width-section tool-card card-log">
+            <h3><i class="fas fa-list-ul"></i>Tracked Applications</h3>
+            <div class="job-log-table-container">
+                <table class="job-log-table">
+                    <thead>
+                        <tr>
+                            <th>Job Title Snippet</th>
+                            <th>Company (Guess)</th>
+                            <th>Date Logged</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jobLogTableBody">
+                        <!-- Log entries will be populated here by JavaScript -->
+                        <tr><td colspan="5" style="text-align:center; color: var(--base00);">No jobs logged yet. Process a job description to start.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <button id="btnClearJobLog" class="btn btn-subtle" style="margin-top: 0.75rem; align-self: flex-end;"><i class="fas fa-trash-alt"></i> Clear Entire Log</button>
+        </section>
+
+    </div>
+
+    <footer class="app-footer">
+        <p>&copy; 2024 Job Application Console. AI by Gemini.</p>
+    </footer>
+
+    <script>
+        // --- UTILITY FUNCTIONS (condensed) ---
+        const $ = (selector) => document.querySelector(selector);
+        const $$ = (selector) => document.querySelectorAll(selector);
+
+        function toggleLoading(indicatorId, btnId, show) {
+            const indicator = $(`#${indicatorId}`);
+            const button = btnId ? $(`#${btnId}`) : null;
+            if (indicator) indicator.style.display = show ? 'block' : 'none';
+            if (button) button.disabled = show;
+        }
+
+        function updateOutput(elementId, content, isHtml = false) {
+            const el = $(`#${elementId}`);
+            if (el) isHtml ? el.innerHTML = content : el.textContent = content;
+        }
+
+        function getCoreInputs() {
+            return {
+                apiKey: $('#apiKey').value,
+                jobDescription: $('#jobDescription').value,
+                currentResume: $('#currentResume').value,
+                userNotes: $('#userNotes').value,
+                userFullName: $('#userFullName').value,
+                userCoreSkills: $('#userCoreSkills').value,
+                userCareerGoal: $('#userCareerGoal').value,
+            };
+        }
+        
+        function validateCoreInputs(inputs, requireJD = true, requireResume = true) {
+            if (!inputs.apiKey) { alert('Gemini API Key is required.'); return false; }
+            if (requireJD && !inputs.jobDescription) { alert('Job Description is required.'); return false; }
+            if (requireResume && !inputs.currentResume) { alert('Current Resume text is required.'); return false; }
+            return true;
+        }
+
+        function copyToClipboard(elementId) {
+            const el = $(`#${elementId}`);
+            if (!el) return;
+            navigator.clipboard.writeText(el.innerText || el.value)
+                .then(() => alert(`${el.closest('.tool-card')?.querySelector('h3')?.innerText || el.previousElementSibling?.innerText || 'Content'} copied!`))
+                .catch(err => console.error('Copy failed: ', err));
+        }
+
+        // Simple hash function for JD uniqueness
+        async function digestMessage(message) {
+            const msgUint8 = new TextEncoder().encode(message);                           // encode as (utf-8) Uint8Array
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);           // hash the message
+            const hashArray = Array.from(new Uint8Array(hashBuffer));                     // convert buffer to byte array
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
+            return hashHex;
+        }
+
+
+        // --- PROFILE LOCAL STORAGE ---
+        const profileFields = ['userFullName', 'userCoreSkills', 'userCareerGoal', 'apiKey'];
+        $('#btnSaveProfile').addEventListener('click', () => {
+            profileFields.forEach(id => localStorage.setItem(id, $(`#${id}`).value));
+            alert('Profile saved locally!');
+        });
+        function loadProfile() {
+            profileFields.forEach(id => {
+                const val = localStorage.getItem(id);
+                if (val && $(`#${id}`)) $(`#${id}`).value = val;
+            });
+        }
+        
+        // --- JOB LOG MANAGEMENT ---
+        const JOB_LOG_KEY = 'jobApplicationLog';
+        let jobLog = [];
+
+        function loadJobLog() {
+            const storedLog = localStorage.getItem(JOB_LOG_KEY);
+            jobLog = storedLog ? JSON.parse(storedLog) : [];
+            renderJobLog();
+        }
+
+        function saveJobLog() {
+            localStorage.setItem(JOB_LOG_KEY, JSON.stringify(jobLog));
+            renderJobLog();
+        }
+
+        async function addJobToLog(jobDescriptionText) {
+            if (!jobDescriptionText.trim()) return; // Don't log empty JDs
+
+            const jobDescHash = await digestMessage(jobDescriptionText);
+            const existingJob = jobLog.find(job => job.jobDescriptionHash === jobDescHash);
+
+            if (existingJob) {
+                console.log("Job already logged:", existingJob.id);
+                // Optionally, update 'lastAccessed' timestamp or similar
+                return existingJob.id; // Return existing ID
+            }
+
+            // Simple extraction for title/company - can be improved
+            const firstLines = jobDescriptionText.substring(0, 200).split('\n');
+            let jobTitleGuess = firstLines[0]?.trim() || "Untitled Job";
+            if (jobTitleGuess.length > 60) jobTitleGuess = jobTitleGuess.substring(0, 57) + "...";
+            
+            // Try to find a company name (very basic)
+            let companyGuess = "Unknown Company";
+            const companyKeywords = ['company:', 'at ', 'for '];
+            for (const line of firstLines) {
+                for (const kw of companyKeywords) {
+                    if (line.toLowerCase().includes(kw)) {
+                        let potentialCompany = line.substring(line.toLowerCase().indexOf(kw) + kw.length).trim();
+                        if (potentialCompany.length > 0 && potentialCompany.length < 50) {
+                             companyGuess = potentialCompany.split(/[,.;\s(]/)[0]; // Take first word after keyword
+                             if (companyGuess.length > 30) companyGuess = companyGuess.substring(0,27) + "...";
+                             break;
+                        }
+                    }
+                }
+                if (companyGuess !== "Unknown Company") break;
+            }
+
+
+            const newJob = {
+                id: `job_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+                jobTitleGuess: jobTitleGuess,
+                companyGuess: companyGuess,
+                dateLogged: new Date().toISOString(),
+                status: 'Processing', // Initial status
+                jobDescriptionHash: jobDescHash,
+                applicationSentDate: null
+            };
+            jobLog.unshift(newJob); // Add to the beginning of the array
+            saveJobLog();
+            console.log("New job logged:", newJob.id);
+            return newJob.id;
+        }
+
+        function updateJobStatus(jobId, newStatus) {
+            const jobIndex = jobLog.findIndex(job => job.id === jobId);
+            if (jobIndex > -1) {
+                jobLog[jobIndex].status = newStatus;
+                if (newStatus === 'Application Sent') {
+                    jobLog[jobIndex].applicationSentDate = new Date().toISOString();
+                }
+                saveJobLog();
+            }
+        }
+
+        function deleteJobFromLog(jobId) {
+            if (confirm("Are you sure you want to delete this log entry?")) {
+                jobLog = jobLog.filter(job => job.id !== jobId);
+                saveJobLog();
+            }
+        }
+        
+        $('#btnClearJobLog').addEventListener('click', () => {
+            if (confirm("ARE YOU SURE you want to delete THE ENTIRE job log? This cannot be undone.")) {
+                jobLog = [];
+                saveJobLog();
+            }
+        });
+
+        function renderJobLog() {
+            const tbody = $('#jobLogTableBody');
+            tbody.innerHTML = ''; // Clear existing rows
+
+            if (jobLog.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: var(--base00);">No jobs logged yet. Process a job description to start.</td></tr>';
+                return;
+            }
+
+            jobLog.forEach(job => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${job.jobTitleGuess}</td>
+                    <td>${job.companyGuess}</td>
+                    <td>${new Date(job.dateLogged).toLocaleDateString()}</td>
+                    <td class="status-${job.status.toLowerCase().replace(/\s+/g, '-')}">${job.status}</td>
+                    <td>
+                        ${job.status !== 'Application Sent' ? `<button class="btn btn-log-action btn-primary" data-id="${job.id}" data-action="mark-sent"><i class="fas fa-check-circle"></i> Mark Sent</button>` : ''}
+                        <button class="btn btn-log-action btn-subtle" data-id="${job.id}" data-action="delete"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Add event listeners to new buttons
+            $$('#jobLogTableBody .btn-log-action').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const targetButton = e.currentTarget;
+                    const jobId = targetButton.dataset.id;
+                    const action = targetButton.dataset.action;
+
+                    if (action === 'mark-sent') {
+                        updateJobStatus(jobId, 'Application Sent');
+                    } else if (action === 'delete') {
+                        deleteJobFromLog(jobId);
+                    }
+                });
+            });
+        }
+
+
+        // --- DUMMY API CALL SIMULATOR ---
+        async function simulateApiCall(toolName, duration = 1000, successData, error = false) {
+            console.log(`Simulating API call for: ${toolName}`);
+            await new Promise(resolve => setTimeout(resolve, duration));
+            if (error) throw new Error(`Simulated API Error for ${toolName}`);
+            return successData || `Successful AI response for ${toolName}.`;
+        }
+
+        // --- EVENT LISTENERS (Modified to include job logging) ---
+        function addToolListener(btnId, loadingId, outputIds = [], actionFnName, requiresJD = true, requiresResume = true) {
+            const btn = $(`#${btnId}`);
+            if (!btn) { console.warn(`Button ${btnId} not found.`); return; }
+
+            btn.addEventListener('click', async () => {
+                const inputs = getCoreInputs();
+                if (!validateCoreInputs(inputs, requiresJD, requiresResume)) return;
+                
+                // Log the job if JD is involved and required
+                let currentJobId = null;
+                if (requiresJD && inputs.jobDescription) {
+                    currentJobId = await addJobToLog(inputs.jobDescription);
+                    if (currentJobId) { // If a new job was logged or existing one found, update its status
+                        const jobEntry = jobLog.find(j => j.id === currentJobId);
+                        if (jobEntry && jobEntry.status !== 'Application Sent') { // Don't revert "Sent" status
+                           updateJobStatus(currentJobId, `Processing: ${actionFnName}`);
+                        }
+                    }
+                }
+
+                toggleLoading(loadingId, btnId, true);
+                if (!Array.isArray(outputIds)) outputIds = [outputIds];
+                outputIds.forEach(id => updateOutput(id, 'Processing...'));
+
+                try {
+                    const result = await simulateApiCall(actionFnName, 1500, `Mock data for ${actionFnName}.`);
+                    
+                    if (outputIds.length === 1) {
+                        updateOutput(outputIds[0], result);
+                    } else if (outputIds.length > 0 && typeof result === 'object') {
+                        outputIds.forEach((id, index) => {
+                            updateOutput(id, result[Object.keys(result)[index]] || `Output ${index+1} for ${actionFnName}`);
+                        });
+                    } else if (outputIds.length > 0) {
+                         updateOutput(outputIds[0], result);
+                    }
+
+                    // After successful processing, update job status to Pending Submission if not already sent
+                    if (currentJobId) {
+                        const jobEntry = jobLog.find(j => j.id === currentJobId);
+                        if (jobEntry && jobEntry.status !== 'Application Sent') {
+                           updateJobStatus(currentJobId, 'Pending Submission');
+                        }
+                    }
+
+                } catch (e) {
+                    outputIds.forEach(id => updateOutput(id, `Error: ${e.message}`));
+                     if (currentJobId) { // If error, reflect that in status
+                        const jobEntry = jobLog.find(j => j.id === currentJobId);
+                        if (jobEntry && jobEntry.status !== 'Application Sent') {
+                           updateJobStatus(currentJobId, `Error: ${actionFnName}`);
+                        }
+                    }
+                } finally {
+                    toggleLoading(loadingId, btnId, false);
+                }
+            });
+        }
+
+        // Initialize Page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProfile();
+            loadJobLog();
+
+            // Setup Tool Listeners
+            // Analysis & Optimization
+            addToolListener('btnAnalyzeJD', 'loadingJDAnalysis', ['jdKeywordsOutput', 'jdCompanyInsightsOutput'], 'JD Analysis', true, false);
+            addToolListener('btnAnalyzeResume', 'loadingResumeAnalysis', 'resumeStrengthOutput', 'Resume Strength Analysis', false, true);
+            addToolListener('btnAnalyzeATS', 'loadingATSAnalysis', ['atsKeywordsOutput', 'atsIntegrationOutput'], 'ATS Optimization', true, true);
+
+            // Content Generation
+            addToolListener('btnGenerateCoverLetter', 'loadingCoverLetter', 'coverLetterOutput', 'Cover Letter Generation');
+            addToolListener('btnTweakResume', 'loadingResumeTweaks', 'resumeTweaksOutput', 'Resume Tweak Suggestion');
+            addToolListener('btnBuildResumeSection', 'loadingResumeSection', 'resumeSectionOutput', 'Resume Section Building');
+
+            // Communication & Prep
+            addToolListener('btnGenerateNetworkingMessage', 'loadingNetworkingMessage', 'networkingMessageOutput', 'Networking Message Crafting', false, true);
+            addToolListener('btnGenerateFollowUp', 'loadingFollowUp', 'followUpOutput', 'Follow-Up Email Generation', true, false);
+            addToolListener('btnGenerateElevatorPitch', 'loadingElevatorPitch', 'elevatorPitchOutput', 'Elevator Pitch Generation', false, true);
+            addToolListener('btnGenerateInterviewPrep', 'loadingInterviewPrep', ['interviewBehavioralOutput', 'interviewTechnicalOutput', 'interviewUserQuestionsOutput'], 'Interview Prep Kit Generation', true, true);
+            addToolListener('btnAnalyzeSkillGap', 'loadingSkillGap', 'skillGapOutput', 'Skill Gap Analysis');
+        });
+
+    </script>
+</body>
+</html>

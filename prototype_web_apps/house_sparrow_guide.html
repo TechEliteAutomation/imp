@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Sparrow Companion</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 960px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        header {
+            background-color: #5D4037; /* Earthy brown */
+            color: #fff;
+            padding: 1.5em 0;
+            text-align: center;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        header p {
+            margin: 0.5em 0 0;
+            font-style: italic;
+        }
+
+        h2 {
+            color: #4E342E; /* Darker brown */
+            border-bottom: 2px solid #D7CCC8; /* Light brown */
+            padding-bottom: 0.3em;
+            margin-top: 1.5em;
+        }
+
+        .section {
+            margin-bottom: 2em;
+            padding: 1em;
+            background-color: #EFEBE9; /* Very light brown/beige */
+            border-radius: 5px;
+        }
+
+        .soundboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 1em;
+        }
+
+        .sound-button {
+            background-color: #795548; /* Medium brown */
+            color: white;
+            border: none;
+            padding: 15px;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sound-button:hover {
+            background-color: #5D4037; /* Darker brown on hover */
+        }
+
+        .button-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .button-desc {
+            font-size: 0.85em;
+            opacity: 0.9;
+        }
+
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 0.5em;
+        }
+
+        .feeding-tips strong, .identification-guide strong {
+            color: #6D4C41; /* Brown for emphasis */
+        }
+
+        .image-placeholder {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            background-color: #ccc;
+            display: block;
+            margin: 10px auto;
+            text-align: center;
+            line-height: 150px; /* Adjust if image aspect ratio is different */
+            color: #777;
+            border: 1px dashed #aaa;
+            border-radius: 4px;
+        }
+        
+        .bird-image {
+            display: block;
+            margin: 15px auto;
+            max-width: 80%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2em;
+            padding: 1em;
+            font-size: 0.9em;
+            color: #777;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 2em;
+            }
+            .soundboard {
+                grid-template-columns: 1fr; /* Stack buttons on small screens */
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>House Sparrow Companion</h1>
+        <p><em>Passer domesticus</em></p>
+    </header>
+
+    <div class="container">
+        <div class="section">
+            <h2>About the House Sparrow</h2>
+            <p>The House Sparrow is a familiar small bird found across much of the world. Originally native to Eurasia and North Africa, it has been introduced to many other regions. They are highly adaptable and often live in close association with humans, thriving in urban and suburban environments.</p>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/House_Sparrow_-_Passer_domesticus_-_Male_-_West_Virginia_-_USA.jpg/640px-House_Sparrow_-_Passer_domesticus_-_Male_-_West_Virginia_-_USA.jpg" alt="Male House Sparrow" class="bird-image">
+            <p style="text-align:center; font-size:0.8em;">Male House Sparrow (Image: Wikimedia Commons)</p>
+        </div>
+
+        <div class="section" id="soundboard-section">
+            <h2>Soundboard</h2>
+            <p>Click the buttons below to hear common House Sparrow vocalizations. <strong>Note:</strong> You need to provide the sound files in a 'sounds' folder next to this HTML file.</p>
+            <div class="soundboard">
+                <button class="sound-button" data-sound="chirp.mp3">
+                    <span class="button-name">Chirp / Cheep</span>
+                    <span class="button-desc">Common contact call, used for various social interactions. Can also be a begging call from young.</span>
+                </button>
+                <button class="sound-button" data-sound="chatter.mp3">
+                    <span class="button-name">Chatter / Trill</span>
+                    <span class="button-desc">Often heard from groups, can indicate excitement, mild alarm, or social communication.</span>
+                </button>
+                <button class="sound-button" data-sound="song.mp3">
+                    <span class="button-name">Song</span>
+                    <span class="button-desc">A series of monotonous chirps, typically by males to proclaim territory or attract mates.</span>
+                </button>
+                <button class="sound-button" data-sound="alarm.mp3">
+                    <span class="button-name">Alarm Call</span>
+                    <span class="button-desc">A sharper, more urgent call used when a predator or threat is nearby.</span>
+                </button>
+                 <button class="sound-button" data-sound="flight.mp3">
+                    <span class="button-name">Flight Call</span>
+                    <span class="button-desc">Short calls often given during flight, helping maintain flock cohesion.</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="section" id="feeding-section">
+            <h2>Feeding Suggestions</h2>
+            <p>House Sparrows are opportunistic eaters with a varied diet. Here's how you can help feed them responsibly:</p>
+            <ul class="feeding-tips">
+                <li><strong>Seeds:</strong> They love small seeds. Good choices include:
+                    <ul>
+                        <li>Millet (white proso is a favorite)</li>
+                        <li>Cracked corn</li>
+                        <li>Sunflower hearts/chips (easier for them than whole black oil sunflower seeds)</li>
+                        <li>Nyjer seeds (though less preferred than by finches)</li>
+                        <li>Canary seed</li>
+                    </ul>
+                </li>
+                <li><strong>Grains:</strong> Oats (uncooked, rolled), wheat, barley.</li>
+                <li><strong>Kitchen Scraps (in moderation):</strong>
+                    <ul>
+                        <li>Bread crumbs (whole grain is better, offer sparingly as it's not highly nutritious)</li>
+                        <li>Cooked rice (unsalted)</li>
+                        <li>Small amounts of unsalted cheese</li>
+                    </ul>
+                </li>
+                <li><strong>Insects:</strong> Especially important during breeding season for feeding young. You can offer dried mealworms. They will also forage for natural insects.</li>
+                <li><strong>Water:</strong> Provide a shallow dish of fresh, clean water for drinking and bathing, especially during dry or freezing weather. Change it daily.</li>
+                <li><strong>Feeder Types:</strong>
+                    <ul>
+                        <li><strong>Platform feeders:</strong> Ideal as they allow easy access.</li>
+                        <li><strong>Hopper feeders:</strong> Also suitable.</li>
+                        <li><strong>Ground feeding:</strong> Sparrows are comfortable feeding on the ground. Scatter seeds in an open area.</li>
+                        <li>Avoid tube feeders with small perches if specifically targeting sparrows, as they can be outcompeted by more agile finches.</li>
+                    </ul>
+                </li>
+                <li><strong>Important Considerations:</strong>
+                    <ul>
+                        <li><strong>Hygiene:</strong> Clean feeders regularly (every 1-2 weeks) with a mild bleach solution (1 part bleach to 9 parts water), rinse thoroughly, and dry completely to prevent disease spread.</li>
+                        <li><strong>Location:</strong> Place feeders in an area with some nearby cover (shrubs, trees) for sparrows to retreat to if startled, but not so close that cats can easily ambush them.</li>
+                        <li><strong>Avoid:</strong> Salty foods, spoiled food, chocolate, avocado, onions, and anything with artificial sweeteners.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section" id="identification-section">
+            <h2>Identification Guide</h2>
+            <p>House Sparrows are small, chunky birds, about 14-16 cm (5.5-6.3 inches) long.</p>
+            <ul class="identification-guide">
+                <li><strong>Male:</strong>
+                    <ul>
+                        <li>Distinctive grey crown.</li>
+                        <li>Chestnut brown nape and eye-stripe.</li>
+                        <li>Black bib on throat and upper chest (size varies with age and dominance).</li>
+                        <li>White cheeks.</li>
+                        <li>Back is streaked brown and black.</li>
+                        <li>Bill is black in breeding season, horn-colored in non-breeding.</li>
+                    </ul>
+                </li>
+                <li><strong>Female:</strong>
+                    <ul>
+                        <li>Overall duller and less patterned than males.</li>
+                        <li>Buffy-brown above, plain grayish-brown below.</li>
+                        <li>Pale buffy eyebrow (supercilium).</li>
+                        <li>No black bib or grey crown.</li>
+                        <li>Bill is usually yellowish-brown or horn-colored.</li>
+                    </ul>
+                </li>
+                <li><strong>Juvenile:</strong>
+                    <ul>
+                        <li>Resembles adult female but often looks scruffier.</li>
+                        <li>Paler bill, often with a yellowish gape (fleshy corners of the mouth).</li>
+                        <li>Young males start developing their bib and darker plumage as they mature.</li>
+                    </ul>
+                </li>
+            </ul>
+             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Passer_domesticus_female_and_male_in_New_Delhi_I_IMG_7539.jpg/640px-Passer_domesticus_female_and_male_in_New_Delhi_I_IMG_7539.jpg" alt="Male and Female House Sparrows" class="bird-image">
+            <p style="text-align:center; font-size:0.8em;">Male (right) and Female (left) House Sparrows (Image: Wikimedia Commons)</p>
+        </div>
+
+        <div class="section" id="habitat-nesting-section">
+            <h2>Habitat & Nesting</h2>
+            <p>House Sparrows are highly adaptable and closely associated with human settlements.</p>
+            <ul>
+                <li><strong>Habitat:</strong> Commonly found in cities, towns, suburbs, farms, and agricultural areas. They are less common in dense forests, deserts, or high mountains away from human activity.</li>
+                <li><strong>Nesting Sites:</strong> They are cavity nesters but are very opportunistic.
+                    <ul>
+                        <li>Holes and crevices in buildings (e.g., under eaves, in ventilation shafts).</li>
+                        <li>Nest boxes (they readily use them).</li>
+                        <li>Dense ivy or creepers on walls.</li>
+                        <li>Streetlights and traffic signals.</li>
+                        <li>They may sometimes build nests in trees, but prefer sheltered man-made structures.</li>
+                    </ul>
+                </li>
+                <li><strong>Nest Material:</strong> Untidy, domed structures made of dried grass, feathers, string, paper, and other debris. The inner cup is often lined with softer materials like feathers.</li>
+                <li><strong>Breeding:</strong> They can have 2-4 broods per year, with 3-6 eggs per clutch. Eggs are whitish or greenish-white, speckled with brown and grey. Incubation is about 10-14 days, and young fledge about 14-17 days after hatching. Both parents feed the young.</li>
+            </ul>
+        </div>
+
+        <div class="section" id="fun-facts-section">
+            <h2>Fun Facts</h2>
+            <ul>
+                <li>House Sparrows often take "dust baths" or "water baths" to clean their feathers and remove parasites.</li>
+                <li>They are highly social birds and are often seen in flocks, especially outside the breeding season.</li>
+                <li>Despite their name, they are not closely related to American sparrows (Family Passerellidae) but are "Old World" sparrows (Family Passeridae).</li>
+                <li>Their scientific name, <em>Passer domesticus</em>, literally means "domestic sparrow," reflecting their close association with human dwellings.</li>
+                <li>They are known for their intelligence and ability to learn, such as figuring out how to open automatic doors to enter buildings for food or warmth.</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; <span id="currentYear"></span> House Sparrow Companion. App created for educational purposes.</p>
+    </footer>
+
+    <script>
+        // Soundboard functionality
+        const audioPlayer = new Audio();
+        const soundButtons = document.querySelectorAll('.sound-button');
+
+        soundButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const soundFile = button.getAttribute('data-sound');
+                if (soundFile) {
+                    // Construct the path to the sound file
+                    // Assumes an 'sounds' folder in the same directory as the HTML file
+                    audioPlayer.src = `sounds/${soundFile}`;
+                    audioPlayer.play()
+                        .catch(error => {
+                            console.error("Error playing sound:", error);
+                            // Optionally, provide user feedback if sound fails to play
+                            // For example, by briefly changing button text or style
+                            const originalText = button.querySelector('.button-desc').textContent;
+                            button.querySelector('.button-desc').textContent = "Sound file not found or error.";
+                            setTimeout(() => {
+                                button.querySelector('.button-desc').textContent = originalText;
+                            }, 3000);
+                        });
+                }
+            });
+        });
+
+        // Set current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Job Application Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Solarized Dark Palette (same as before) */
+        :root {
+            --base03:  #002b36; --base02:  #073642; --base01:  #586e75;
+            --base00:  #657b83; --base0:   #839496; --base1:   #93a1a1;
+            --base2:   #eee8d5; --base3:   #fdf6e3; --yellow:  #b58900;
+            --orange:  #cb4b16; --red:     #dc322f; --magenta: #d33682;
+            --violet:  #6c71c4; --blue:    #268bd2; --cyan:    #2aa198;
+            --green:   #859900;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-size: 16px; }
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--base03);
+            color: var(--base0);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .app-header {
+            background-color: var(--base02);
+            padding: 1.5rem 2rem;
+            text-align: center;
+            border-bottom: 3px solid var(--blue);
+        }
+        .app-header h1 { color: var(--base2); font-size: 2.2rem; font-weight: 300; }
+        .app-header h1 i { margin-right: 0.75rem; color: var(--cyan); }
+
+        .page-container {
+            flex-grow: 1;
+            width: 100%;
+            max-width: 1400px; /* Wider for more content */
+            margin: 1.5rem auto;
+            padding: 0 1rem;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .full-width-section {
+            grid-column: 1 / -1; /* Span all columns */
+            margin-bottom: 1.5rem;
+        }
+
+        .section-card {
+            background-color: var(--base02);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+            border-left: 5px solid var(--cyan);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-card h2, .section-card h3 {
+            color: var(--base1);
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--base01);
+            font-weight: 400;
+        }
+        .section-card h3 { font-size: 1.2rem; margin-top: 1rem; }
+        .section-card h2 i, .section-card h3 i { margin-right: 0.6rem; }
+
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; color: var(--base1); margin-bottom: 0.5rem; font-weight: 500; }
+        .form-group input[type="text"],
+        .form-group input[type="password"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background-color: var(--base03);
+            color: var(--base0);
+            border: 1px solid var(--base01);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .form-group input[type="text"]:focus,
+        .form-group input[type="password"]:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 2px rgba(38, 139, 210, 0.3);
+        }
+        .form-group textarea { min-height: 120px; resize: vertical; }
+        .form-group select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23839496'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.5em; }
+
+
+        .button-group { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+        .btn {
+            padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 500;
+            border: none; border-radius: 4px; cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            text-align: center; display: inline-flex; align-items: center; justify-content: center;
+        }
+        .btn i { margin-right: 0.5rem; }
+        .btn-primary { background-color: var(--blue); color: var(--base3); }
+        .btn-primary:hover { background-color: var(--violet); }
+        .btn-secondary { background-color: var(--green); color: var(--base03); }
+        .btn-secondary:hover { background-color: var(--yellow); }
+        .btn-tertiary { background-color: var(--orange); color: var(--base3); }
+        .btn-tertiary:hover { background-color: var(--red); }
+        .btn-info { background-color: var(--cyan); color: var(--base03); }
+        .btn-info:hover { background-color: var(--blue); color: var(--base3); }
+
+        .btn-copy {
+            background-color: var(--base01); color: var(--base2); font-size: 0.9rem;
+            padding: 0.4rem 0.8rem; margin-top: 0.5rem; float: right;
+        }
+        .btn-copy:hover { background-color: var(--base00); }
+
+        .output-content {
+            background-color: var(--base03); color: var(--base0); padding: 1rem;
+            border: 1px solid var(--base01); border-radius: 4px; min-height: 150px;
+            white-space: pre-wrap; font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.95rem; overflow-x: auto; margin-top: 0.5rem;
+        }
+        .output-content ul { padding-left: 20px; }
+        .output-content li { margin-bottom: 0.5em; }
+
+        .loading-indicator {
+            display: none; text-align: center; padding: 1rem; color: var(--cyan);
+            font-size: 1.1rem;
+        }
+        .loading-indicator i { font-size: 1.75rem; margin-bottom: 0.5rem; display: block;}
+
+        .app-footer {
+            background-color: var(--base02); color: var(--base00); text-align: center;
+            padding: 1.25rem; margin-top: auto; font-size: 0.9rem;
+            border-top: 1px solid var(--base01);
+        }
+
+        /* Specific Section Colors */
+        .api-config-card { border-left-color: var(--orange); }
+        .api-config-card h2 i { color: var(--orange); }
+        .profile-card { border-left-color: var(--magenta); }
+        .profile-card h2 i { color: var(--magenta); }
+        .inputs-card { border-left-color: var(--yellow); }
+        .inputs-card h2 i { color: var(--yellow); }
+        .analysis-card { border-left-color: var(--green); }
+        .analysis-card h3 i { color: var(--green); }
+        .generation-card { border-left-color: var(--blue); }
+        .generation-card h3 i { color: var(--blue); }
+        .preparation-card { border-left-color: var(--violet); }
+        .preparation-card h3 i { color: var(--violet); }
+
+        .sub-section {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px dashed var(--base01);
+        }
+        .sub-section:first-child {
+            margin-top: 0;
+            padding-top: 0;
+            border-top: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="app-header">
+        <h1><i class="fas fa-rocket"></i> Advanced Job Application Co-Pilot</h1>
+    </header>
+
+    <div class="page-container">
+        <!-- Core Inputs & Configuration -->
+        <section class="full-width-section section-card api-config-card">
+            <h2><i class="fas fa-key"></i> API & Profile Setup</h2>
+            <div class="grid-container">
+                <div class="form-group">
+                    <label for="apiKey">Gemini API Key</label>
+                    <input type="password" id="apiKey" name="apiKey" placeholder="Enter your Gemini API Key">
+                    <small style="color: var(--base00); display: block; margin-top: 0.25rem;">Stored locally. Required for all AI features.</small>
+                </div>
+                <div class="profile-card" style="border-left: none; padding-left: 0;"> <!-- Nested for layout -->
+                    <h3><i class="fas fa-user-circle"></i> My Profile (for AI Context)</h3>
+                    <div class="form-group">
+                        <label for="userFullName">Your Full Name</label>
+                        <input type="text" id="userFullName" placeholder="e.g., Dr. Jane Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="userCoreSkills">Your Top 3-5 Core Skills (comma-separated)</label>
+                        <input type="text" id="userCoreSkills" placeholder="e.g., Python, Project Management, Data Analysis">
+                    </div>
+                    <div class="form-group">
+                        <label for="userCareerGoal">Brief Career Goal/Objective</label>
+                        <textarea id="userCareerGoal" rows="2" placeholder="e.g., Seeking a challenging role in AI research..."></textarea>
+                    </div>
+                    <button id="btnSaveProfile" class="btn btn-info"><i class="fas fa-save"></i> Save Profile (Locally)</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="full-width-section section-card inputs-card">
+            <h2><i class="fas fa-file-import"></i> Core Application Inputs</h2>
+            <div class="grid-container">
+                <div class="form-group">
+                    <label for="jobDescription">Job Description</label>
+                    <textarea id="jobDescription" name="jobDescription" rows="12" placeholder="Paste the full job description here..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="currentResume">Your Current Resume (Text)</label>
+                    <textarea id="currentResume" name="currentResume" rows="12" placeholder="Paste the text of your current resume here..."></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="userNotes">Optional: Specific Directives for AI (for current task)</label>
+                <textarea id="userNotes" name="userNotes" rows="3" placeholder="e.g., Emphasize my leadership in the cover letter. Focus resume tweaks on the last 5 years."></textarea>
+            </div>
+        </section>
+
+        <!-- AI Powered Tools -->
+        <div class="grid-container">
+
+            <!-- Analysis Tools Column (Example) -->
+            <section class="section-card analysis-card">
+                <h2><i class="fas fa-search-dollar"></i> Analysis Tools</h2>
+
+                <div class="sub-section">
+                    <h3><i class="fas fa-clipboard-check"></i> Job Description Analyzer</h3>
+                    <button id="btnAnalyzeJD" class="btn btn-secondary"><i class="fas fa-play-circle"></i> Analyze Job Description</button>
+                    <div class="loading-indicator" id="loadingJDAnalysis"> <i class="fas fa-spinner fa-spin"></i>Analyzing JD...</div>
+                    <div class="output-area" style="margin-top: 1rem;">
+                        <h4><i class="fas fa-key"></i> Key Skills & Keywords:</h4>
+                        <div id="jdKeywordsOutput" class="output-content">AI-identified keywords and skills will appear here.</div>
+                    </div>
+                    <div class="output-area" style="margin-top: 1rem;">
+                        <h4><i class="fas fa-building"></i> Company & Culture Insights:</h4>
+                        <div id="jdCompanyInsightsOutput" class="output-content">AI-inferred insights about the company/culture from the JD.</div>
+                    </div>
+                </div>
+
+                <div class="sub-section">
+                    <h3><i class="fas fa-user-check"></i> Resume Strength Analyzer</h3>
+                    <button id="btnAnalyzeResume" class="btn btn-secondary"><i class="fas fa-play-circle"></i> Analyze My Resume (General)</button>
+                    <div class="loading-indicator" id="loadingResumeAnalysis"> <i class="fas fa-spinner fa-spin"></i>Analyzing Resume...</div>
+                    <div class="output-area" style="margin-top: 1rem;">
+                        <h4><i class="fas fa-thumbs-up"></i> Strengths & Areas for Improvement:</h4>
+                        <div id="resumeStrengthOutput" class="output-content">AI feedback on general resume strength, ATS friendliness, action verbs, clarity.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Generation Tools Column (Example) -->
+            <section class="section-card generation-card">
+                <h2><i class="fas fa-magic"></i> Generation Tools</h2>
+
+                <div class="sub-section">
+                    <h3><i class="fas fa-envelope-open-text"></i> Cover Letter Generator</h3>
+                    <div class="form-group">
+                        <label for="coverLetterTone">Select Tone:</label>
+                        <select id="coverLetterTone">
+                            <option value="professional">Professional & Formal</option>
+                            <option value="enthusiastic">Enthusiastic & Passionate</option>
+                            <option value="concise">Concise & Direct</option>
+                            <option value="creative">Creative & Unique</option>
+                        </select>
+                    </div>
+                    <button id="btnGenerateCoverLetter" class="btn btn-primary"><i class="fas fa-pen-fancy"></i> Generate Cover Letter</button>
+                    <div class="loading-indicator" id="loadingCoverLetter"> <i class="fas fa-spinner fa-spin"></i>Crafting Cover Letter...</div>
+                    <button class="btn btn-copy" onclick="copyToClipboard('coverLetterOutput')"><i class="fas fa-copy"></i> Copy</button>
+                    <div id="coverLetterOutput" class="output-content">Generated cover letter...</div>
+                </div>
+
+                <div class="sub-section">
+                    <h3><i class="fas fa-user-edit"></i> Resume Tweak Suggester (Targeted)</h3>
+                    <button id="btnTweakResume" class="btn btn-primary"><i class="fas fa-wrench"></i> Suggest Resume Tweaks for Job</button>
+                    <div class="loading-indicator" id="loadingResumeTweaks"> <i class="fas fa-spinner fa-spin"></i>Finding Tweak Opportunities...</div>
+                    <button class="btn btn-copy" onclick="copyToClipboard('resumeTweaksOutput')"><i class="fas fa-copy"></i> Copy</button>
+                    <div id="resumeTweaksOutput" class="output-content">AI-suggested resume tweaks based on the job description... (e.g., "Quantify achievement X", "Incorporate keyword Y", "Rephrase bullet Z for impact")</div>
+                </div>
+
+                <div class="sub-section">
+                    <h3><i class="fas fa-puzzle-piece"></i> Targeted Resume Section Builder</h3>
+                    <div class="form-group">
+                        <label for="resumeSectionToBuild">Resume Section to Build/Enhance:</label>
+                        <input type="text" id="resumeSectionToBuild" placeholder="e.g., Summary, Experience for Project X, Skills">
+                    </div>
+                    <button id="btnBuildResumeSection" class="btn btn-primary"><i class="fas fa-hammer"></i> Build Section</button>
+                    <div class="loading-indicator" id="loadingResumeSection"> <i class="fas fa-spinner fa-spin"></i>Building Section...</div>
+                    <button class="btn btn-copy" onclick="copyToClipboard('resumeSectionOutput')"><i class="fas fa-copy"></i> Copy</button>
+                    <div id="resumeSectionOutput" class="output-content">AI-generated content for the specified resume section, tailored to the JD.</div>
+                </div>
+            </section>
+
+            <!-- Preparation Tools Column (Example) -->
+            <section class="section-card preparation-card">
+                <h2><i class="fas fa-user-tie"></i> Preparation Tools</h2>
+
+                <div class="sub-section">
+                    <h3><i class="fas fa-comments"></i> Interview Prep Kit</h3>
+                    <button id="btnGenerateInterviewPrep" class="btn btn-tertiary"><i class="fas fa-list-alt"></i> Generate Interview Prep Kit</button>
+                    <div class="loading-indicator" id="loadingInterviewPrep"> <i class="fas fa-spinner fa-spin"></i>Preparing Kit...</div>
+                    <div class="output-area" style="margin-top: 1rem;">
+                        <h4><i class="fas fa-question-circle"></i> Potential Behavioral Questions (STAR):</h4>
+                        <div id="interviewBehavioralOutput" class="output-content">AI-generated behavioral questions...</div>
+                    </div>
+                    <div class="output-area" style="margin-top: 1rem;">
+                        <h4><i class="fas fa-cogs"></i> Potential Technical/Role-Specific Questions:</h4>
+                        <div id="interviewTechnicalOutput" class="output-content">AI-generated technical questions...</div>
+                    </div>
+                    <div class="output-area" style="margin-top: 1rem;">
+                        <h4><i class="fas fa-lightbulb"></i> Questions for YOU to Ask Interviewer:</h4>
+                        <div id="interviewUserQuestionsOutput" class="output-content">AI-suggested questions for you to ask...</div>
+                    </div>
+                </div>
+
+                <div class="sub-section">
+                    <h3><i class="fas fa-chart-line"></i> Skill Gap Analyzer</h3>
+                    <button id="btnAnalyzeSkillGap" class="btn btn-tertiary"><i class="fas fa-search"></i> Analyze Skill Gap</button>
+                    <div class="loading-indicator" id="loadingSkillGap"> <i class="fas fa-spinner fa-spin"></i>Analyzing Gaps...</div>
+                    <div class="output-area" style="margin-top: 1rem;">
+                        <h4><i class="fas fa-graduation-cap"></i> Identified Gaps & Learning Suggestions:</h4>
+                        <div id="skillGapOutput" class="output-content">Skills in JD not prominent in resume, with suggestions for learning/highlighting.</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <footer class="app-footer">
+        <p>© 2023 Advanced Job Application Co-Pilot. AI by Gemini.</p>
+    </footer>
+
+    <script>
+        // --- UTILITY FUNCTIONS ---
+        function showLoading(indicatorId, buttonToDisableId) {
+            document.getElementById(indicatorId).style.display = 'block';
+            if (buttonToDisableId) document.getElementById(buttonToDisableId).disabled = true;
+        }
+
+        function hideLoading(indicatorId, buttonToEnableId) {
+            document.getElementById(indicatorId).style.display = 'none';
+            if (buttonToEnableId) document.getElementById(buttonToEnableId).disabled = false;
+        }
+
+        function updateOutput(elementId, content, isHtml = false) {
+            const el = document.getElementById(elementId);
+            if (isHtml) {
+                el.innerHTML = content;
+            } else {
+                el.textContent = content;
+            }
+        }
+
+        function getCoreInputs() {
+            return {
+                apiKey: document.getElementById('apiKey').value,
+                jobDescription: document.getElementById('jobDescription').value,
+                currentResume: document.getElementById('currentResume').value,
+                userNotes: document.getElementById('userNotes').value,
+                // Profile data
+                userFullName: document.getElementById('userFullName').value,
+                userCoreSkills: document.getElementById('userCoreSkills').value,
+                userCareerGoal: document.getElementById('userCareerGoal').value,
+            };
+        }
+        
+        function validateCoreInputs(inputs, requireJD = true, requireResume = true) {
+            if (!inputs.apiKey) {
+                alert('Please enter your Gemini API Key.');
+                return false;
+            }
+            if (requireJD && !inputs.jobDescription) {
+                alert('Please provide the Job Description.');
+                return false;
+            }
+            if (requireResume && !inputs.currentResume) {
+                alert('Please provide your Current Resume text.');
+                return false;
+            }
+            return true;
+        }
+
+        function copyToClipboard(elementId) {
+            const outputElement = document.getElementById(elementId);
+            let textToCopy = outputElement.innerText; // Prefer innerText for formatted content
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert(outputElement.previousElementSibling.innerText.replace(':', '') + ' copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                alert('Failed to copy text. Please try manually.');
+            });
+        }
+
+        // --- "MY PROFILE" LOCAL STORAGE ---
+        const profileFields = ['userFullName', 'userCoreSkills', 'userCareerGoal'];
+        document.getElementById('btnSaveProfile').addEventListener('click', () => {
+            profileFields.forEach(id => localStorage.setItem(id, document.getElementById(id).value));
+            alert('Profile saved locally in your browser!');
+        });
+
+        function loadProfile() {
+            profileFields.forEach(id => {
+                const savedValue = localStorage.getItem(id);
+                if (savedValue) document.getElementById(id).value = savedValue;
+            });
+        }
+        loadProfile(); // Load profile on page load
+
+
+        // --- DUMMY API CALL SIMULATOR ---
+        async function simulateApiCall(duration = 1500, successData = "Successful AI response.", error = false) {
+            await new Promise(resolve => setTimeout(resolve, duration));
+            if (error) throw new Error("Simulated API Error");
+            return successData;
+        }
+
+        // --- EVENT LISTENERS (Placeholders for Gemini API calls) ---
+
+        // Job Description Analyzer
+        document.getElementById('btnAnalyzeJD').addEventListener('click', async () => {
+            const inputs = getCoreInputs();
+            if (!validateCoreInputs(inputs, true, false)) return; // JD required, Resume not for this
+            
+            showLoading('loadingJDAnalysis', 'btnAnalyzeJD');
+            updateOutput('jdKeywordsOutput', 'Analyzing...');
+            updateOutput('jdCompanyInsightsOutput', 'Analyzing...');
+            try {
+                // TODO: Replace with actual Gemini API call for JD Analysis
+                const keywords = await simulateApiCall(1000, "Keywords: AI, Machine Learning, Python. Skills: Problem-solving, Teamwork.");
+                const insights = await simulateApiCall(1000, "Company seems fast-paced, values innovation. Role involves cross-functional collaboration.");
+                updateOutput('jdKeywordsOutput', keywords);
+                updateOutput('jdCompanyInsightsOutput', insights);
+            } catch (e) {
+                updateOutput('jdKeywordsOutput', `Error: ${e.message}`);
+                updateOutput('jdCompanyInsightsOutput', '');
+            } finally {
+                hideLoading('loadingJDAnalysis', 'btnAnalyzeJD');
+            }
+        });
+
+        // Resume Strength Analyzer
+        document.getElementById('btnAnalyzeResume').addEventListener('click', async () => {
+            const inputs = getCoreInputs();
+            if (!validateCoreInputs(inputs, false, true)) return; // Resume required
+            
+            showLoading('loadingResumeAnalysis', 'btnAnalyzeResume');
+            updateOutput('resumeStrengthOutput', 'Analyzing...');
+            try {
+                // TODO: Replace with actual Gemini API call for Resume Analysis
+                const analysis = await simulateApiCall(2000, "Overall good. ATS Score: 8/10 (Tip: Add more quantifiable results). Action Verbs: Strong. Clarity: Good. Suggestion: Expand on Project X experience.");
+                updateOutput('resumeStrengthOutput', analysis);
+            } catch (e) {
+                updateOutput('resumeStrengthOutput', `Error: ${e.message}`);
+            } finally {
+                hideLoading('loadingResumeAnalysis', 'btnAnalyzeResume');
+            }
+        });
+
+        // Cover Letter Generator
+        document.getElementById('btnGenerateCoverLetter').addEventListener('click', async () => {
+            const inputs = getCoreInputs();
+            const tone = document.getElementById('coverLetterTone').value;
+            if (!validateCoreInputs(inputs)) return;
+            
+            showLoading('loadingCoverLetter', 'btnGenerateCoverLetter');
+            updateOutput('coverLetterOutput', 'Generating...');
+            try {
+                // TODO: Replace with actual Gemini API call
+                const coverLetter = await simulateApiCall(2500, `Dear Hiring Manager,\n\nWith great [${tone}] I am applying for... My skills in [Skill from Resume/JD]... My experience with [User Note: ${inputs.userNotes || 'general experience'}] makes me a strong candidate.\n\nSincerely,\n${inputs.userFullName || '[Your Name]'}`);
+                updateOutput('coverLetterOutput', coverLetter);
+            } catch (e) {
+                updateOutput('coverLetterOutput', `Error: ${e.message}`);
+            } finally {
+                hideLoading('loadingCoverLetter', 'btnGenerateCoverLetter');
+            }
+        });
+        
+        // Resume Tweak Suggester
+        document.getElementById('btnTweakResume').addEventListener('click', async () => {
+            const inputs = getCoreInputs();
+            if (!validateCoreInputs(inputs)) return;
+
+            showLoading('loadingResumeTweaks', 'btnTweakResume');
+            updateOutput('resumeTweaksOutput', 'Generating suggestions...');
+            try {
+                // TODO: Replace with actual Gemini API call
+                const tweaks = await simulateApiCall(2000, "Resume Tweak Suggestions:\n- Quantify: 'Managed projects' -> 'Managed 3 projects valued at $50k'.\n- Keyword: Add 'Cloud Computing' if experienced.\n- Impact: Rephrase 'Responsible for X' to 'Achieved Y by doing X'.");
+                updateOutput('resumeTweaksOutput', tweaks);
+            } catch (e) {
+                updateOutput('resumeTweaksOutput', `Error: ${e.message}`);
+            } finally {
+                hideLoading('loadingResumeTweaks', 'btnTweakResume');
+            }
+        });
+
+        // Targeted Resume Section Builder
+        document.getElementById('btnBuildResumeSection').addEventListener('click', async () => {
+            const inputs = getCoreInputs();
+            const sectionToBuild = document.getElementById('resumeSectionToBuild').value;
+            if (!sectionToBuild) {
+                alert('Please specify which resume section to build.');
+                return;
+            }
+            if (!validateCoreInputs(inputs)) return;
+            
+            showLoading('loadingResumeSection', 'btnBuildResumeSection');
+            updateOutput('resumeSectionOutput', `Building section: ${sectionToBuild}...`);
+            try {
+                // TODO: Replace with actual Gemini API call
+                const sectionContent = await simulateApiCall(2000, `For your "${sectionToBuild}" section, tailored to the JD:\n\n- Leveraged [Skill from JD] to achieve [Quantifiable Result] in [Project from Resume].\n- Collaborated with teams using [Tool from JD] to deliver [Outcome].`);
+                updateOutput('resumeSectionOutput', sectionContent);
+            } catch (e) {
+                updateOutput('resumeSectionOutput', `Error: ${e.message}`);
+            } finally {
+                hideLoading('loadingResumeSection', 'btnBuildResumeSection');
+            }
+        });
+
+        // Interview Prep Kit
+        document.getElementById('btnGenerateInterviewPrep').addEventListener('click', async () => {
+            const inputs = getCoreInputs();
+            if (!validateCoreInputs(inputs, true, false)) return; // JD needed, resume optional but helpful
+
+            showLoading('loadingInterviewPrep', 'btnGenerateInterviewPrep');
+            updateOutput('interviewBehavioralOutput', 'Generating...');
+            updateOutput('interviewTechnicalOutput', 'Generating...');
+            updateOutput('interviewUserQuestionsOutput', 'Generating...');
+            try {
+                // TODO: Replace with actual Gemini API calls (could be multiple or one complex prompt)
+                const behavioral = await simulateApiCall(1500, "- Tell me about a time you failed.\n- Describe a challenging project.");
+                const technical = await simulateApiCall(1500, "- Explain [Technical Concept from JD].\n- How would you approach [Problem related to JD]?");
+                const userQuestions = await simulateApiCall(1500, "- What does success look like in this role in the first 90 days?\n- Can you describe the team culture?");
+                updateOutput('interviewBehavioralOutput', behavioral);
+                updateOutput('interviewTechnicalOutput', technical);
+                updateOutput('interviewUserQuestionsOutput', userQuestions);
+            } catch (e) {
+                updateOutput('interviewBehavioralOutput', `Error: ${e.message}`);
+                updateOutput('interviewTechnicalOutput', '');
+                updateOutput('interviewUserQuestionsOutput', '');
+            } finally {
+                hideLoading('loadingInterviewPrep', 'btnGenerateInterviewPrep');
+            }
+        });
+        
+        // Skill Gap Analyzer
+        document.getElementById('btnAnalyzeSkillGap').addEventListener('click', async () => {
+            const inputs = getCoreInputs();
+            if (!validateCoreInputs(inputs)) return;
+
+            showLoading('loadingSkillGap', 'btnAnalyzeSkillGap');
+            updateOutput('skillGapOutput', 'Analyzing skill gap...');
+            try {
+                // TODO: Replace with actual Gemini API call
+                const gaps = await simulateApiCall(2000, "Identified Gaps:\n- JD requires 'Advanced SQL', resume shows 'Basic SQL'. Suggestion: Take an advanced SQL course, highlight complex query projects.\n- 'Agile Methodology' mentioned in JD, not prominent in resume. Suggestion: Add a bullet point on Agile experience if any, or mention familiarity.");
+                updateOutput('skillGapOutput', gaps);
+            } catch (e) {
+                updateOutput('skillGapOutput', `Error: ${e.message}`);
+            } finally {
+                hideLoading('loadingSkillGap', 'btnAnalyzeSkillGap');
+            }
+        });
+
+    </script>
+</body>
+</html>

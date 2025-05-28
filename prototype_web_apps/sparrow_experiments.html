@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sparrow Soundboard Experiments</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #e8f5e9; /* Light green, nature-y */
+            color: #2e7d32; /* Darker green */
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+            border-radius: 10px;
+        }
+
+        header {
+            background-color: #4CAF50; /* Green */
+            color: #fff;
+            padding: 1.5em 0;
+            text-align: center;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.2em;
+        }
+        header p {
+            margin: 0.5em 0 0;
+            font-style: italic;
+            font-size: 0.9em;
+        }
+
+        h2 {
+            color: #388E3C; /* Medium Green */
+            border-bottom: 2px solid #A5D6A7; /* Light Green */
+            padding-bottom: 0.3em;
+            margin-top: 1.5em;
+        }
+
+        .section {
+            margin-bottom: 2em;
+            padding: 1em;
+            background-color: #f1f8e9; /* Very light green/beige */
+            border-radius: 5px;
+        }
+        
+        .intro-text {
+            font-size: 1.1em;
+            margin-bottom: 1.5em;
+            padding: 10px;
+            background-color: #fff9c4; /* Light yellow for emphasis */
+            border-left: 5px solid #ffeb3b; /* Yellow border */
+            border-radius: 4px;
+        }
+
+        .soundboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 1em;
+        }
+
+        .sound-button {
+            background-color: #66BB6A; /* Lighter Green */
+            color: white;
+            border: none;
+            padding: 15px;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .sound-button:hover {
+            background-color: #4CAF50; /* Darker Green on hover */
+        }
+        .sound-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .button-name {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        .button-purpose {
+            font-size: 0.9em;
+            opacity: 0.95;
+            margin-bottom: 5px;
+            font-style: italic;
+        }
+        
+        .button-expected-reaction {
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+        .button-expected-reaction strong {
+            color: #1B5E20; /* Darkest green */
+        }
+
+        .tips-section ul {
+            list-style-type: '🐦'; /* Sparrow emoji or other fun icon */
+            padding-left: 25px;
+        }
+        .tips-section li {
+            margin-bottom: 0.7em;
+            padding-left: 10px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2em;
+            padding: 1em;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            .soundboard {
+                grid-template-columns: 1fr; /* Stack buttons on small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Sparrow Soundboard Experiments</h1>
+        <p>Interact with your local <em>Passer domesticus</em>!</p>
+    </header>
+
+    <div class="container">
+        <div class="section">
+            <p class="intro-text">
+                <strong>Welcome!</strong> Use this soundboard to play common House Sparrow calls and observe their reactions.
+                Remember to be a respectful observer. Avoid causing undue stress. Have fun experimenting!
+                <br><strong>Note:</strong> You need to provide the sound files in a 'sounds' folder.
+            </p>
+        </div>
+
+        <div class="section" id="soundboard-section">
+            <h2>Interactive Soundboard</h2>
+            <div class="soundboard">
+                <button class="sound-button" data-sound="chirp.mp3">
+                    <span class="button-name">"Hello There" Chirp</span>
+                    <span class="button-purpose">Purpose: Announce 'your' presence, see if others are near.</span>
+                    <span class="button-expected-reaction"><strong>Expected Reaction:</strong> Sparrows might chirp back, look in your direction, or approach cautiously. Good for general contact.</span>
+                </button>
+
+                <button class="sound-button" data-sound="chatter.mp3">
+                    <span class="button-name">"What's Happening?" Chatter</span>
+                    <span class="button-purpose">Purpose: Simulate group excitement or mild curiosity.</span>
+                    <span class="button-expected-reaction"><strong>Expected Reaction:</strong> May cause nearby sparrows to become more active, look around for the source, or join in if they perceive a social gathering.</span>
+                </button>
+
+                <button class="sound-button" data-sound="song.mp3">
+                    <span class="button-name">"My Territory" Song</span>
+                    <span class="button-purpose">Purpose: Mimic a male sparrow claiming territory or attracting a mate.</span>
+                    <span class="button-expected-reaction"><strong>Expected Reaction:</strong> Resident male sparrows might sing back aggressively, puff up, or investigate. Females might show curiosity. Best during breeding season.</span>
+                </button>
+
+                <button class="sound-button" data-sound="alarm.mp3">
+                    <span class="button-name">"Danger!" Alarm Call</span>
+                    <span class="button-purpose">Purpose: Simulate a warning of a nearby threat.</span>
+                    <span class="button-expected-reaction"><strong>Expected Reaction:</strong> Sparrows may freeze, become highly alert, look for predators (cats, hawks), or fly to cover. <strong>Use sparingly to avoid stressing them.</strong></span>
+                </button>
+
+                <button class="sound-button" data-sound="begging_chick.mp3"> <!-- New sound file name -->
+                    <span class="button-name">"Feed Me!" Chick Begging</span>
+                    <span class="button-purpose">Purpose: Imitate a hungry fledgling.</span>
+                    <span class="button-expected-reaction"><strong>Expected Reaction:</strong> Adult sparrows, especially during nesting season, might investigate, looking for a lost or hungry chick. They might approach with food.</span>
+                </button>
+
+                <button class="sound-button" data-sound="aggressive_squabble.mp3"> <!-- New sound file name -->
+                    <span class="button-name">"Back Off!" Aggressive Squabble</span>
+                    <span class="button-purpose">Purpose: Simulate a minor dispute between sparrows (e.g., over food).</span>
+                    <span class="button-expected-reaction"><strong>Expected Reaction:</strong> Nearby sparrows might become alert, look towards the sound, or even briefly scatter if they perceive a fight.</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="section tips-section" id="tips-section">
+            <h2>Tips for Best Results & Ethical Interaction</h2>
+            <ul>
+                <li><strong>Location, Location, Location:</strong> Play sounds when sparrows are visibly present but not too far away. Near feeders or their usual perching spots is ideal.</li>
+                <li><strong>Timing is Key:</strong> Early morning or late afternoon when birds are often more active can yield better results. Reactions might differ during breeding season vs. winter.</li>
+                <li><strong>One at a Time:</strong> Play one sound and wait for a reaction before playing another. Don't just spam them with noise.</li>
+                <li><strong>Observe Quietly:</strong> After playing a sound, stay still and quiet to observe their behavior without further disturbing them.</li>
+                <li><strong>Vary the Volume:</strong> Start with a lower volume. Not all sounds need to be loud to elicit a response.</li>
+                <li><strong>Safety First (for them):</strong> If you notice genuine distress (e.g., frantic flying, repeated alarm calls from them), give them a break.</li>
+                <li><strong>Combine with Visuals (Optional):</strong> If you have a bird feeder, playing a "Feed Me!" call when they are near the feeder might be interesting.</li>
+                <li><strong>Patience Pays Off:</strong> Sometimes the reaction is subtle or delayed. Watch closely!</li>
+            </ul>
+        </div>
+
+        <div class="section" id="feeding-info">
+            <h2>Quick Feeding Reminders</h2>
+            <p>If you want to attract them for your experiments (or just help them out):</p>
+            <ul>
+                <li><strong>Good Foods:</strong> Millet, cracked corn, sunflower hearts/chips, oats. A shallow dish of fresh water is also appreciated.</li>
+                <li><strong>Feeder Hygiene:</strong> Keep feeders clean to prevent disease.</li>
+                <li><strong>Avoid:</strong> Salty foods, bread in large quantities (it's like junk food for them), spoiled items.</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>&copy; <span id="currentYear"></span> Sparrow Soundboard Experiments. Observe responsibly!</p>
+    </footer>
+
+    <script>
+        const audioPlayer = new Audio();
+        const soundButtons = document.querySelectorAll('.sound-button');
+
+        soundButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const soundFile = button.getAttribute('data-sound');
+                if (soundFile) {
+                    audioPlayer.src = `sounds/${soundFile}`; // Assumes 'sounds' folder
+                    audioPlayer.play()
+                        .catch(error => {
+                            console.error("Error playing sound:", error);
+                            const originalDesc = button.querySelector('.button-expected-reaction').innerHTML;
+                            button.querySelector('.button-expected-reaction').innerHTML = "<strong>Error: Sound file not found or cannot play. Check 'sounds' folder and file names.</strong>";
+                            setTimeout(() => {
+                                button.querySelector('.button-expected-reaction').innerHTML = originalDesc;
+                            }, 4000);
+                        });
+                }
+            });
+        });
+
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

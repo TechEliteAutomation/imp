@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyper-Powered Job Application Console</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Solarized Dark Palette (same as before) */
+        :root {
+            --base03:  #002b36; --base02:  #073642; --base01:  #586e75;
+            --base00:  #657b83; --base0:   #839496; --base1:   #93a1a1;
+            --base2:   #eee8d5; --base3:   #fdf6e3; --yellow:  #b58900;
+            --orange:  #cb4b16; --red:     #dc322f; --magenta: #d33682;
+            --violet:  #6c71c4; --blue:    #268bd2; --cyan:    #2aa198;
+            --green:   #859900;
+            --font-primary: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            --font-mono: 'Fira Code', 'Consolas', 'Monaco', monospace;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-size: 15px; /* Slightly smaller base for density */ }
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--base03);
+            color: var(--base0);
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .app-header {
+            background-color: var(--base02);
+            padding: 1rem 1.5rem; /* Condensed header */
+            text-align: center;
+            border-bottom: 2px solid var(--blue);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .app-header h1 { color: var(--base2); font-size: 1.8rem; font-weight: 400; }
+        .app-header h1 i { margin-right: 0.5rem; color: var(--cyan); }
+
+        .page-container {
+            flex-grow: 1;
+            width: 100%;
+            max-width: 1600px; /* Wider for more tools */
+            margin: 1rem auto;
+            padding: 0 1rem;
+        }
+
+        .tool-category-header {
+            color: var(--base1);
+            font-size: 1.5rem;
+            font-weight: 300;
+            padding-bottom: 0.5rem;
+            margin: 1.5rem 0 1rem 0;
+            border-bottom: 1px solid var(--base01);
+            display: flex;
+            align-items: center;
+        }
+        .tool-category-header i { margin-right: 0.75rem; color: var(--yellow); font-size: 1.3rem;}
+
+
+        .grid-container {
+            display: grid;
+            /* More columns, smaller min size for density */
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 1rem; /* Condensed gap */
+        }
+
+        .full-width-section { grid-column: 1 / -1; }
+
+        .tool-card {
+            background-color: var(--base02);
+            padding: 1rem; /* Condensed padding */
+            border-radius: 6px; /* Slightly smaller radius */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            border-left: 4px solid var(--cyan); /* Default accent */
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.2s ease-in-out;
+        }
+        .tool-card:hover { box-shadow: 0 4px 12px rgba(38,139,210,0.3); }
+
+
+        .tool-card h3 {
+            color: var(--base1);
+            font-size: 1.15rem; /* Condensed title */
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--base00);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        .tool-card h3 i { margin-right: 0.5rem; font-size: 1rem; width: 20px; text-align: center;}
+        .tool-card h4 { color: var(--base0); font-size: 0.95rem; margin: 0.75rem 0 0.25rem 0; font-weight: 500;}
+
+
+        .form-group { margin-bottom: 0.75rem; /* Condensed margin */ }
+        .form-group label {
+            display: block; color: var(--base0);
+            margin-bottom: 0.25rem; font-weight: 400;
+            font-size: 0.85rem; /* Smaller labels */
+        }
+        .form-group input[type="text"],
+        .form-group input[type="password"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.5rem 0.75rem; /* Condensed padding */
+            background-color: var(--base03);
+            color: var(--base1); /* Brighter text for inputs */
+            border: 1px solid var(--base00);
+            border-radius: 3px;
+            font-size: 0.9rem; /* Slightly smaller font in inputs */
+            font-family: var(--font-primary);
+        }
+        .form-group input[type="text"]:focus,
+        .form-group input[type="password"]:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 1px var(--blue);
+        }
+        .form-group textarea { min-height: 80px; /* Shorter default */ resize: vertical; font-family: var(--font-mono);}
+        .form-group select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23839496'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1.2em; padding-right: 2em;}
+
+        .button-group { display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap; }
+        .btn {
+            padding: 0.5rem 1rem; /* Condensed button */
+            font-size: 0.85rem; /* Smaller button text */
+            font-weight: 500;
+            border: 1px solid transparent;
+            border-radius: 3px; cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center; display: inline-flex; align-items: center; justify-content: center;
+        }
+        .btn i { margin-right: 0.4rem; font-size: 0.9em; }
+        .btn-primary { background-color: var(--blue); color: var(--base3); border-color: var(--blue); }
+        .btn-primary:hover { background-color: var(--violet); border-color: var(--violet); }
+        .btn-secondary { background-color: var(--green); color: var(--base03); border-color: var(--green); }
+        .btn-secondary:hover { background-color: var(--yellow); border-color: var(--yellow); }
+        .btn-tertiary { background-color: var(--orange); color: var(--base3); border-color: var(--orange); }
+        .btn-tertiary:hover { background-color: var(--red); border-color: var(--red); }
+        .btn-info { background-color: var(--cyan); color: var(--base03); border-color: var(--cyan); }
+        .btn-info:hover { background-color: var(--base01); color: var(--base2); border-color: var(--base01); }
+        .btn-subtle { background-color: var(--base01); color: var(--base2); border-color: var(--base00); }
+        .btn-subtle:hover { background-color: var(--base00); color: var(--base3); }
+
+
+        .btn-copy {
+            background-color: var(--base01); color: var(--base2); font-size: 0.75rem;
+            padding: 0.25rem 0.5rem; margin-top: 0.25rem; float: right; border-radius: 3px;
+        }
+        .btn-copy:hover { background-color: var(--base00); }
+
+        .output-content {
+            background-color: var(--base03); color: var(--base0); padding: 0.75rem;
+            border: 1px solid var(--base00); border-radius: 3px; min-height: 100px; /* Shorter default */
+            white-space: pre-wrap; font-family: var(--font-mono);
+            font-size: 0.85rem; /* Smaller output text */
+            overflow-x: auto; margin-top: 0.5rem;
+            flex-grow: 1; /* Allow output to take available space */
+        }
+        .output-content ul { padding-left: 15px; }
+        .output-content li { margin-bottom: 0.3em; }
+
+        .loading-indicator {
+            display: none; text-align: center; padding: 0.5rem; color: var(--cyan);
+            font-size: 0.9rem;
+        }
+        .loading-indicator i { font-size: 1.5rem; margin-bottom: 0.25rem; display: block;}
+
+        .app-footer {
+            background-color: var(--base02); color: var(--base00); text-align: center;
+            padding: 0.75rem; margin-top: auto; font-size: 0.8rem;
+            border-top: 1px solid var(--base01);
+        }
+
+        /* Tool Card Specific Accents */
+        .card-config { border-left-color: var(--orange); }
+        .card-inputs { border-left-color: var(--yellow); }
+        .card-analysis { border-left-color: var(--green); }
+        .card-generation { border-left-color: var(--blue); }
+        .card-communication { border-left-color: var(--magenta); }
+        .card-prep { border-left-color: var(--violet); }
+
+        /* For two-column layout within a card if needed */
+        .card-content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+        @media (max-width: 768px) {
+            .card-content-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="app-header">
+        <h1><i class="fas fa-atom"></i> Job Application Console v2.0</h1>
+    </header>
+
+    <div class="page-container">
+
+        <!-- Core Setup & Inputs -->
+        <div class="tool-category-header"><i class="fas fa-cogs"></i>Core Setup & Inputs</div>
+        <section class="full-width-section grid-container">
+            <div class="tool-card card-config">
+                <h3><i class="fas fa-key"></i>API & Profile</h3>
+                <div class="card-content-grid">
+                    <div>
+                        <div class="form-group">
+                            <label for="apiKey">Gemini API Key</label>
+                            <input type="password" id="apiKey" name="apiKey" placeholder="Gemini API Key">
+                        </div>
+                        <div class="form-group">
+                            <label for="userFullName">Your Full Name</label>
+                            <input type="text" id="userFullName" placeholder="e.g., Dr. Jane Doe">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label for="userCoreSkills">Top 3-5 Core Skills (comma-sep)</label>
+                            <input type="text" id="userCoreSkills" placeholder="Python, AI, Project Mgmt">
+                        </div>
+                        <div class="form-group">
+                            <label for="userCareerGoal">Brief Career Goal</label>
+                            <textarea id="userCareerGoal" rows="1" placeholder="Seeking role in AI research..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                 <button id="btnSaveProfile" class="btn btn-info btn-subtle" style="margin-top:auto;"><i class="fas fa-save"></i> Save Profile</button>
+            </div>
+
+            <div class="tool-card card-inputs" style="grid-column: span 2;"> <!-- Takes more space -->
+                <h3><i class="fas fa-paste"></i>Primary Inputs</h3>
+                 <div class="card-content-grid">
+                    <div class="form-group">
+                        <label for="jobDescription">Job Description</label>
+                        <textarea id="jobDescription" name="jobDescription" rows="7" placeholder="Paste job description..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="currentResume">Current Resume (Text)</label>
+                        <textarea id="currentResume" name="currentResume" rows="7" placeholder="Paste resume text..."></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="userNotes">Optional Directives for AI (Current Task)</label>
+                    <textarea id="userNotes" name="userNotes" rows="2" placeholder="e.g., Emphasize leadership. Focus on last 5 years."></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analysis & Optimization Tools -->
+        <div class="tool-category-header"><i class="fas fa-search-plus"></i>Analysis & Optimization</div>
+        <div class="grid-container">
+            <div class="tool-card card-analysis">
+                <h3><i class="fas fa-clipboard-check"></i>JD Analyzer</h3>
+                <button id="btnAnalyzeJD" class="btn btn-secondary"><i class="fas fa-play"></i> Analyze JD</button>
+                <div class="loading-indicator" id="loadingJDAnalysis"><i class="fas fa-spinner fa-spin"></i></div>
+                <h4><i class="fas fa-tags"></i>Key Skills & Keywords:</h4>
+                <div id="jdKeywordsOutput" class="output-content">JD keywords...</div>
+                <h4><i class="fas fa-building"></i>Company/Culture Insights:</h4>
+                <div id="jdCompanyInsightsOutput" class="output-content">JD insights...</div>
+            </div>
+
+            <div class="tool-card card-analysis">
+                <h3><i class="fas fa-user-check"></i>Resume Strength</h3>
+                <button id="btnAnalyzeResume" class="btn btn-secondary"><i class="fas fa-play"></i> Analyze Resume</button>
+                <div class="loading-indicator" id="loadingResumeAnalysis"><i class="fas fa-spinner fa-spin"></i></div>
+                <h4><i class="fas fa-chart-bar"></i>Overall Feedback:</h4>
+                <div id="resumeStrengthOutput" class="output-content">Resume feedback...</div>
+            </div>
+
+            <div class="tool-card card-analysis">
+                <h3><i class="fas fa-filter"></i>ATS Optimizer</h3>
+                <button id="btnAnalyzeATS" class="btn btn-secondary"><i class="fas fa-play"></i> Optimize for ATS</button>
+                <div class="loading-indicator" id="loadingATSAnalysis"><i class="fas fa-spinner fa-spin"></i></div>
+                <h4><i class="fas fa-tasks"></i>ATS Keywords & Integration Score:</h4>
+                <div id="atsKeywordsOutput" class="output-content">ATS keywords from JD...</div>
+                <h4><i class="fas fa-bullseye"></i>Resume Integration Check:</h4>
+                <div id="atsIntegrationOutput" class="output-content">How well resume integrates ATS keywords...</div>
+            </div>
+        </div>
+
+        <!-- Content Generation Tools -->
+        <div class="tool-category-header"><i class="fas fa-pencil-alt"></i>Content Generation</div>
+        <div class="grid-container">
+            <div class="tool-card card-generation">
+                <h3><i class="fas fa-envelope-open-text"></i>Cover Letter</h3>
+                <div class="form-group">
+                    <label for="coverLetterTone">Tone:</label>
+                    <select id="coverLetterTone">
+                        <option value="professional">Professional</option>
+                        <option value="enthusiastic">Enthusiastic</option>
+                        <option value="concise">Concise</option>
+                        <option value="creative">Creative</option>
+                    </select>
+                </div>
+                <button id="btnGenerateCoverLetter" class="btn btn-primary"><i class="fas fa-pen-fancy"></i> Generate</button>
+                <div class="loading-indicator" id="loadingCoverLetter"><i class="fas fa-spinner fa-spin"></i></div>
+                <button class="btn btn-copy" onclick="copyToClipboard('coverLetterOutput')"><i class="fas fa-copy"></i></button>
+                <div id="coverLetterOutput" class="output-content">Cover letter...</div>
+            </div>
+
+            <div class="tool-card card-generation">
+                <h3><i class="fas fa-user-edit"></i>Resume Tweaks</h3>
+                <button id="btnTweakResume" class="btn btn-primary"><i class="fas fa-wrench"></i> Suggest Tweaks</button>
+                <div class="loading-indicator" id="loadingResumeTweaks"><i class="fas fa-spinner fa-spin"></i></div>
+                <button class="btn btn-copy" onclick="copyToClipboard('resumeTweaksOutput')"><i class="fas fa-copy"></i></button>
+                <div id="resumeTweaksOutput" class="output-content">Resume tweaks...</div>
+            </div>
+
+            <div class="tool-card card-generation">
+                <h3><i class="fas fa-puzzle-piece"></i>Resume Section Builder</h3>
+                <div class="form-group">
+                    <label for="resumeSectionToBuild">Section Name (e.g., Summary):</label>
+                    <input type="text" id="resumeSectionToBuild" placeholder="Summary, Project X details...">
+                </div>
+                <button id="btnBuildResumeSection" class="btn btn-primary"><i class="fas fa-hammer"></i> Build</button>
+                <div class="loading-indicator" id="loadingResumeSection"><i class="fas fa-spinner fa-spin"></i></div>
+                <button class="btn btn-copy" onclick="copyToClipboard('resumeSectionOutput')"><i class="fas fa-copy"></i></button>
+                <div id="resumeSectionOutput" class="output-content">Built section...</div>
+            </div>
+        </div>
+
+        <!-- Communication & Preparation Tools -->
+        <div class="tool-category-header"><i class="fas fa-comments"></i>Communication & Preparation</div>
+        <div class="grid-container">
+            <div class="tool-card card-communication">
+                <h3><i class="fab fa-linkedin"></i>Networking Message</h3>
+                <div class="form-group">
+                    <label for="networkingPurpose">Purpose:</label>
+                    <select id="networkingPurpose">
+                        <option value="recruiter_outreach">Recruiter Outreach</option>
+                        <option value="hiring_manager_contact">Hiring Manager Contact</option>
+                        <option value="informational_interview">Informational Interview Request</option>
+                        <option value="general_connection">General Connection</option>
+                    </select>
+                </div>
+                <button id="btnGenerateNetworkingMessage" class="btn btn-tertiary"><i class="fas fa-paper-plane"></i> Craft Message</button>
+                <div class="loading-indicator" id="loadingNetworkingMessage"><i class="fas fa-spinner fa-spin"></i></div>
+                <button class="btn btn-copy" onclick="copyToClipboard('networkingMessageOutput')"><i class="fas fa-copy"></i></button>
+                <div id="networkingMessageOutput" class="output-content">Networking message...</div>
+            </div>
+
+            <div class="tool-card card-communication">
+                <h3><i class="fas fa-reply"></i>Follow-Up Email</h3>
+                 <div class="form-group">
+                    <label for="followupType">Type:</label>
+                    <select id="followupType">
+                        <option value="post_interview_thanks">Post-Interview Thank You</option>
+                        <option value="application_status_check">Application Status Check</option>
+                        <option value="after_networking_event">After Networking Event</option>
+                    </select>
+                </div>
+                <button id="btnGenerateFollowUp" class="btn btn-tertiary"><i class="fas fa-envelope-circle-check"></i> Generate Email</button>
+                <div class="loading-indicator" id="loadingFollowUp"><i class="fas fa-spinner fa-spin"></i></div>
+                <button class="btn btn-copy" onclick="copyToClipboard('followUpOutput')"><i class="fas fa-copy"></i></button>
+                <div id="followUpOutput" class="output-content">Follow-up email...</div>
+            </div>
+            
+            <div class="tool-card card-prep">
+                <h3><i class="fas fa-microphone-alt"></i>Elevator Pitch / "About Me"</h3>
+                <button id="btnGenerateElevatorPitch" class="btn btn-info"><i class="fas fa-bolt"></i> Generate Pitch</button>
+                <div class="loading-indicator" id="loadingElevatorPitch"><i class="fas fa-spinner fa-spin"></i></div>
+                <button class="btn btn-copy" onclick="copyToClipboard('elevatorPitchOutput')"><i class="fas fa-copy"></i></button>
+                <div id="elevatorPitchOutput" class="output-content">Your pitch...</div>
+            </div>
+
+            <div class="tool-card card-prep">
+                <h3><i class="fas fa-tasks"></i>Interview Prep Kit</h3>
+                <button id="btnGenerateInterviewPrep" class="btn btn-info"><i class="fas fa-list-alt"></i> Generate Kit</button>
+                <div class="loading-indicator" id="loadingInterviewPrep"><i class="fas fa-spinner fa-spin"></i></div>
+                <h4><i class="fas fa-star"></i>Behavioral Qs:</h4>
+                <div id="interviewBehavioralOutput" class="output-content">Behavioral Qs...</div>
+                <h4><i class="fas fa-code"></i>Technical Qs:</h4>
+                <div id="interviewTechnicalOutput" class="output-content">Technical Qs...</div>
+                <h4><i class="fas fa-question-circle"></i>Your Qs for Them:</h4>
+                <div id="interviewUserQuestionsOutput" class="output-content">Your Qs...</div>
+            </div>
+
+            <div class="tool-card card-prep">
+                <h3><i class="fas fa-chart-line"></i>Skill Gap Analyzer</h3>
+                <button id="btnAnalyzeSkillGap" class="btn btn-info"><i class="fas fa-search"></i> Analyze Gap</button>
+                <div class="loading-indicator" id="loadingSkillGap"><i class="fas fa-spinner fa-spin"></i></div>
+                <h4><i class="fas fa-graduation-cap"></i>Gaps & Learning:</h4>
+                <div id="skillGapOutput" class="output-content">Skill gaps...</div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="app-footer">
+        <p>&copy; 2024 Job Application Console. AI by Gemini.</p>
+    </footer>
+
+    <script>
+        // --- UTILITY FUNCTIONS (condensed) ---
+        const $ = (selector) => document.querySelector(selector);
+        const $$ = (selector) => document.querySelectorAll(selector);
+
+        function toggleLoading(indicatorId, btnId, show) {
+            const indicator = $(`#${indicatorId}`);
+            const button = btnId ? $(`#${btnId}`) : null;
+            if (indicator) indicator.style.display = show ? 'block' : 'none';
+            if (button) button.disabled = show;
+        }
+
+        function updateOutput(elementId, content, isHtml = false) {
+            const el = $(`#${elementId}`);
+            if (el) isHtml ? el.innerHTML = content : el.textContent = content;
+        }
+
+        function getCoreInputs() {
+            return {
+                apiKey: $('#apiKey').value,
+                jobDescription: $('#jobDescription').value,
+                currentResume: $('#currentResume').value,
+                userNotes: $('#userNotes').value,
+                userFullName: $('#userFullName').value,
+                userCoreSkills: $('#userCoreSkills').value,
+                userCareerGoal: $('#userCareerGoal').value,
+            };
+        }
+        
+        function validateCoreInputs(inputs, requireJD = true, requireResume = true) {
+            if (!inputs.apiKey) { alert('Gemini API Key is required.'); return false; }
+            if (requireJD && !inputs.jobDescription) { alert('Job Description is required.'); return false; }
+            if (requireResume && !inputs.currentResume) { alert('Current Resume text is required.'); return false; }
+            return true;
+        }
+
+        function copyToClipboard(elementId) {
+            const el = $(`#${elementId}`);
+            if (!el) return;
+            navigator.clipboard.writeText(el.innerText || el.value)
+                .then(() => alert(`${el.previousElementSibling?.innerText || 'Content'} copied!`))
+                .catch(err => console.error('Copy failed: ', err));
+        }
+
+        // --- PROFILE LOCAL STORAGE ---
+        const profileFields = ['userFullName', 'userCoreSkills', 'userCareerGoal', 'apiKey'];
+        $('#btnSaveProfile').addEventListener('click', () => {
+            profileFields.forEach(id => localStorage.setItem(id, $(`#${id}`).value));
+            alert('Profile saved locally!');
+        });
+        function loadProfile() {
+            profileFields.forEach(id => {
+                const val = localStorage.getItem(id);
+                if (val && $(`#${id}`)) $(`#${id}`).value = val;
+            });
+        }
+        loadProfile();
+
+        // --- DUMMY API CALL SIMULATOR ---
+        async function simulateApiCall(toolName, duration = 1000, successData, error = false) {
+            console.log(`Simulating API call for: ${toolName}`);
+            await new Promise(resolve => setTimeout(resolve, duration));
+            if (error) throw new Error(`Simulated API Error for ${toolName}`);
+            return successData || `Successful AI response for ${toolName}.`;
+        }
+
+        // --- EVENT LISTENERS (Add for all buttons) ---
+        // Helper to quickly add listeners
+        function addToolListener(btnId, loadingId, outputIds = [], actionFnName, requiresJD = true, requiresResume = true) {
+            const btn = $(`#${btnId}`);
+            if (!btn) { console.warn(`Button ${btnId} not found.`); return; }
+
+            btn.addEventListener('click', async () => {
+                const inputs = getCoreInputs();
+                if (!validateCoreInputs(inputs, requiresJD, requiresResume)) return;
+                
+                toggleLoading(loadingId, btnId, true);
+                if (!Array.isArray(outputIds)) outputIds = [outputIds]; // Ensure array
+                outputIds.forEach(id => updateOutput(id, 'Processing...'));
+
+                try {
+                    // This is where the specific prompt and API call for 'actionFnName' would go
+                    // For now, we use the generic simulateApiCall
+                    const result = await simulateApiCall(actionFnName, 1500, `Mock data for ${actionFnName} using tone/type if applicable.`);
+                    
+                    if (outputIds.length === 1) {
+                        updateOutput(outputIds[0], result);
+                    } else if (outputIds.length > 0 && typeof result === 'object') { // For multi-output tools
+                        outputIds.forEach((id, index) => {
+                            updateOutput(id, result[Object.keys(result)[index]] || `Output ${index+1} for ${actionFnName}`);
+                        });
+                    } else if (outputIds.length > 0) {
+                         updateOutput(outputIds[0], result); // Fallback if result isn't an object for multi-output
+                    }
+
+                } catch (e) {
+                    outputIds.forEach(id => updateOutput(id, `Error: ${e.message}`));
+                } finally {
+                    toggleLoading(loadingId, btnId, false);
+                }
+            });
+        }
+
+        // Analysis & Optimization
+        addToolListener('btnAnalyzeJD', 'loadingJDAnalysis', ['jdKeywordsOutput', 'jdCompanyInsightsOutput'], 'JD Analysis', true, false);
+        addToolListener('btnAnalyzeResume', 'loadingResumeAnalysis', 'resumeStrengthOutput', 'Resume Strength Analysis', false, true);
+        addToolListener('btnAnalyzeATS', 'loadingATSAnalysis', ['atsKeywordsOutput', 'atsIntegrationOutput'], 'ATS Optimization', true, true);
+
+        // Content Generation
+        addToolListener('btnGenerateCoverLetter', 'loadingCoverLetter', 'coverLetterOutput', 'Cover Letter Generation');
+        addToolListener('btnTweakResume', 'loadingResumeTweaks', 'resumeTweaksOutput', 'Resume Tweak Suggestion');
+        addToolListener('btnBuildResumeSection', 'loadingResumeSection', 'resumeSectionOutput', 'Resume Section Building');
+
+        // Communication & Prep
+        addToolListener('btnGenerateNetworkingMessage', 'loadingNetworkingMessage', 'networkingMessageOutput', 'Networking Message Crafting', false, true); // Resume for context
+        addToolListener('btnGenerateFollowUp', 'loadingFollowUp', 'followUpOutput', 'Follow-Up Email Generation', true, false); // JD for context
+        addToolListener('btnGenerateElevatorPitch', 'loadingElevatorPitch', 'elevatorPitchOutput', 'Elevator Pitch Generation', false, true); // Resume for context
+        addToolListener('btnGenerateInterviewPrep', 'loadingInterviewPrep', ['interviewBehavioralOutput', 'interviewTechnicalOutput', 'interviewUserQuestionsOutput'], 'Interview Prep Kit Generation', true, true);
+        addToolListener('btnAnalyzeSkillGap', 'loadingSkillGap', 'skillGapOutput', 'Skill Gap Analysis');
+
+        // Special handling for multi-output in simulateApiCall for Interview Prep
+        // You'd make your actual Gemini call return an object like:
+        // { behavioral: "...", technical: "...", userQuestions: "..." }
+        // And the addToolListener would map these keys to the outputIds if they match, or by order.
+        // For the dummy, I'll just make it return a string and it will fill the first output.
+        // A more robust solution would involve specific API call functions for each tool.
+
+    </script>
+</body>
+</html>
